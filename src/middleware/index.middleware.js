@@ -15,6 +15,9 @@ const userVerification = (req, res, next) => {
 
 const tokenVerification = (req, res, next) => {
   try {
+    if (!req.headers.authorization) {
+      return res.json({message:"Authentication Error"}).status(401);
+    }
     const authorization = req.headers.authorization.split(" ")[1];
     const authorizationMethod = req.headers.authorization.split(" ")[0];
     const decoded = jwt.verify(authorization, process.env.SECRET_SESSION);
