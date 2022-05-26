@@ -11,6 +11,8 @@ console.log("Port: ", process.env.PORT); // Show which PORT is in use.
 // ────────────────────────────────────────────────────────────────────────────────
 
 // ─── DATABASE ───────────────────────────────────────────────────────────────────
+
+const syncDatabase = false;
 /*console.log({
   DATABASE: {
     PG_USER: process.env.PG_USER,
@@ -31,5 +33,9 @@ process.env.SEED = process.env.AUT_SEED; // this is the authentication seed
 // ────────────────────────────────────────────────────────────────────────────────
 
 // ─── TOKE EXPIRATION ────────────────────────────────────────────────────────────
-process.env.TOKEN_EXPIRATION = "2h";
+process.env.TOKEN_EXPIRATION = "8h";
 // ────────────────────────────────────────────────────────────────────────────────
+
+module.exports = {
+  syncDatabase
+}

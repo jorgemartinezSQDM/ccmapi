@@ -1,6 +1,6 @@
 const { DataTypes} = require("sequelize");
 const sequelize = require("../../bin/config/database");
-const frecuencia = require("./frecuencia")
+const frecuencia = require("./frecuencia.model")
 
 const Cliente = sequelize.define("Cliente", {
   Nombres: {

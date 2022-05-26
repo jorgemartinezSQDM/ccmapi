@@ -6,6 +6,14 @@ const frecuencia = sequelize.define("frecuencia", {
     type: DataTypes.INTEGER,
     autoIncrement: true,
     primaryKey: true
+  },
+  ClienteId: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  },
+  campanaId: {
+    type: DataTypes.INTEGER,
+    allowNull: false
   }
 });
 

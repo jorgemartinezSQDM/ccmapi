@@ -1,6 +1,6 @@
-const cliente = require("../models/cliente");
-const campana = require("../models/campana");
-const frecuencia = require("../models/frecuencia");
+const cliente = require("../models/cliente.model");
+const campana = require("../models/campana.model");
+const frecuencia = require("../models/frecuencia.model");
 const { Op } = require("sequelize");
 const index = async (req, res) => {
   /*let mew_cliente = await cliente.bulkCreate([

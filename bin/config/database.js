@@ -1,4 +1,5 @@
 const { Sequelize } = require("sequelize");
+const config = require("./config")
 
 const sequelize = new Sequelize(
   process.env.PG_DATABASE,
@@ -27,7 +28,7 @@ sequelize
   });
 
 sequelize
-  .sync({force: false})
+  .sync({force: config.syncDatabase})
   .then(() => {})
   .catch((err) => {
     console.log(err);

@@ -3,10 +3,15 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const app = express();
+const config = require("./bin/config/config")
 
-//require('./src/models/cliente')
-//require('./src/models/campana')
-//require('./src/models/frecuencia')
+if (config.syncDatabase) {
+    require('./src/models/cliente.model')
+    require('./src/models/campana.model')
+    require('./src/models/frecuencia.model')
+    require('./src/models/usuario.model')
+}
+
 require("./bin/config/database");
 
 app.use(logger("dev"));
