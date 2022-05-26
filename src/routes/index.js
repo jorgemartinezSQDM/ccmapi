@@ -2,9 +2,11 @@ let express = require('express');
 let router = express.Router();
 
 
-router.use('/bulk', require('./endpoint/bulk.endpoint'))
-router.use('/users', require('./endpoint/usuarios.endpoint'))
+
 router.use('/login', require('./endpoint/login.endpoint'))
+router.use('/users', require('./endpoint/usuarios.endpoint'))
+router.use('/customers', require('./endpoint/clientes.endpoint'))
+router.use('/campaigns', require('./endpoint/campanas.endpoint'))
 
 
 
