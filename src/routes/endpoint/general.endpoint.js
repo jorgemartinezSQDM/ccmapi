@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const controller = require('../../controllers/clientes.controller')
+const controller = require('../../controllers/general.controller')
 const middleware =  require("../../middleware/index.middleware")
 
-router.post("/create-customer", middleware.tokenVerification, controller.create_customer);
+router.post("/:objectroute/create", middleware.tokenVerification, controller.create);
 
 module.exports = router;

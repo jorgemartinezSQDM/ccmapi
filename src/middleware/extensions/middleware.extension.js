@@ -1,6 +1,6 @@
 const base64 = require("base-64");
 const userSchema = require("../../models/usuario.model")
-const userHelper = require("../../controllers/helpers/user.helper")
+const userHelper = require("../../controllers/helpers/general.helper")
 
 const credentialVerification = (authorization, next, res, req) => {
   const userName = base64.decode(authorization).split(":")[0];
