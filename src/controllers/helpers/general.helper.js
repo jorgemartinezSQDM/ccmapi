@@ -15,8 +15,26 @@ const generatePasswordBulk = (bodyReq) => {
   });
 };
 
+const generatellaveUnicaClienteBulk = (bodyReq) => {
+  return bodyReq.map((result) => {
+    if (result.Tipo_Documento) {
+      result.llaveUnicaCliente = result.Tipo_Documento + result.Numero_Documento;
+    }
+    return result;
+  });
+};
+
 const generatePasswordSingle = (bodyReq) => {
   bodyReq.Contrasena = encryptPassword(bodyReq.Contrasena);
+  
+  return bodyReq;
+};
+
+const generatellaveUnicaClienteSingle = (bodyReq) => {
+  
+  if (bodyReq.Tipo_Documento) {
+    bodyReq.llaveUnicaCliente = bodyReq.Tipo_Documento + bodyReq.Numero_Documento;
+  }
   return bodyReq;
 };
 
@@ -24,9 +42,7 @@ const deletePasswordFromResponse = (results) => {
   if (results.length) {
     results = JSON.parse(JSON.stringify(results));
     results = results.map((result) => {
-      if (result.Tipo_Documento) {
-        result.llaveUnicaCliente = result.Tipo_Documento + result.Numero_Documento;
-      }
+      
       delete result.Contrasena;
       return result;
     });
@@ -43,4 +59,6 @@ module.exports = {
   generatePasswordBulk,
   generatePasswordSingle,
   deletePasswordFromResponse,
+  generatellaveUnicaClienteBulk,
+  generatellaveUnicaClienteSingle
 };

@@ -9,10 +9,18 @@ const create = (req, res) => {
   if (req.body.length) {
     if (req.params.objectroute === "users")
       bodyReq = generalHelper.generatePasswordBulk(bodyReq);
+
+    if (req.params.objectroute === "customers")
+      bodyReq = generalHelper.generatellaveUnicaClienteBulk(bodyReq);
+
     databaseFunctionsHelper.bulk_create(objectModel, bodyReq, res);
   } else {
     if (req.params.objectroute === "users")
       bodyReq = generalHelper.generatePasswordSingle(bodyReq);
+
+    if (req.params.objectroute === "customers")
+      bodyReq = generalHelper.generatellaveUnicaClienteSingle(bodyReq);
+
     databaseFunctionsHelper
       .single_create(objectModel, bodyReq)
       .then((response) => {

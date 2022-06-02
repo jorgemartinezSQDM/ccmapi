@@ -15,10 +15,6 @@ const bulk_create = (batabaseObject, recordList, res) => {
 
 const single_create = (batabaseObject, record) => {
 
-  if (record.Tipo_Documento) {
-    record.llaveUnicaCliente = record.Tipo_Documento + record.Numero_Documento
-  }
-
   return batabaseObject
     .create(record)
     .then((result) => {

@@ -22,12 +22,12 @@ const Campana = sequelize.define("Campana", {
 });
 
 Campana.hasMany(frecuencia, {
-  foreignKey: 'campanaId',
+  foreignKey: 'CampanaId',
   sourceKey: 'Id',
   allowNull: false
 })
 frecuencia.belongsTo(Campana, {
-  foreignKey: 'campanaId',
+  foreignKey: 'CampanaId',
   targetKey: 'Id',
   allowNull: false
 })
