@@ -11,7 +11,11 @@ const frecuencia = sequelize.define("frecuencia", {
     type: DataTypes.INTEGER,
     allowNull: false
   },
-  campanaId: {
+  CampanaId: {
+    type: DataTypes.INTEGER,
+    allowNull: false
+  }, 
+  ToquesDia: {
     type: DataTypes.INTEGER,
     allowNull: false
   }

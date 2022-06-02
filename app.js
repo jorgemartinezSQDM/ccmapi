@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const app = express();
 const config = require("./bin/config/config")
+const bodyParser = require('body-parser');
 
 if (config.syncDatabase) {
     require('./src/models/cliente.model')
@@ -19,7 +20,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "src/public")));
-
+app.use(bodyParser.json({limit: '10mb'}));
 app.use("/api/v1", require("./src/routes/index"));
 
 

@@ -7,6 +7,10 @@ const Campana = sequelize.define("Campana", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  ExternalId: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   Id: {
     type: DataTypes.INTEGER,
     autoIncrement: true,

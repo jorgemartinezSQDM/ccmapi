@@ -22,6 +22,11 @@ const Cliente = sequelize.define("Cliente", {
   Numero_Documento: {
     type: DataTypes.STRING,
     allowNull: false,
+  },
+  llaveUnicaCliente: {
+    type: DataTypes.STRING,
+    unique: true,
+    allowNull: false,
   }
 });
 

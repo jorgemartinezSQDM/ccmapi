@@ -20,9 +20,27 @@ const generatePasswordSingle = (bodyReq) => {
   return bodyReq;
 };
 
+const deletePasswordFromResponse = (results) => {
+  if (results.length) {
+    results = JSON.parse(JSON.stringify(results));
+    results = results.map((result) => {
+      if (result.Tipo_Documento) {
+        result.llaveUnicaCliente = result.Tipo_Documento + result.Numero_Documento;
+      }
+      delete result.Contrasena;
+      return result;
+    });
+  } else {
+    results = JSON.parse(JSON.stringify(results));
+    delete results.Contrasena;
+  }
+  return results;
+};
+
 module.exports = {
   encryptPassword,
   comparePassword,
   generatePasswordBulk,
   generatePasswordSingle,
+  deletePasswordFromResponse,
 };
