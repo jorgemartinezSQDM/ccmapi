@@ -27,6 +27,10 @@ const Cliente = sequelize.define("Cliente", {
     type: DataTypes.STRING,
     unique: true,
     allowNull: false,
+  },
+  ListaNegra: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
   }
 });
 
