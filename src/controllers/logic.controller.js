@@ -13,7 +13,9 @@ const index_logic = async (req, res) => {
     { ExternalId: req.body.campana }
   );
   if (!campaign.success)
-    res.status(campaign.status).json({ message: "Campaign does not exist", send_campaign: false });
+    res
+      .status(campaign.status)
+      .json({ message: "Campaign does not exist", send_campaign: false });
   /***
    * Validando existencia del cliente
    */
@@ -25,7 +27,9 @@ const index_logic = async (req, res) => {
     }
   );
   if (!customer.success)
-    res.status(customer.status).json({ message: "Customer does not exist", send_campaign: false });
+    res
+      .status(customer.status)
+      .json({ message: "Customer does not exist", send_campaign: false });
 
   if (customer.result.ListaNegra)
     res

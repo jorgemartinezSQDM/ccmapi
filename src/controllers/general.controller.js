@@ -5,29 +5,42 @@ const generalHelper = require("./helpers/general.helper");
 const create = (req, res) => {
   const objectModel = config.ObjectRoute[req.params.objectroute];
   let bodyReq = JSON.parse(JSON.stringify(req.body));
+  let continuar = true;
+  console.log()
+  if (req.params.objectroute === "users") {
+    if (
+      process.env.SUPERUSER_USERNAME !== req.headers.userName &&
+      process.env.SUPERUSER_PASSWORD !== req.headers.password
+    ) {
+      continuar = false;
+    }
+  }
+  if (continuar) {
+    if (req.body.length) {
+      if (req.params.objectroute === "users")
+        bodyReq = generalHelper.generatePasswordBulk(bodyReq);
 
-  if (req.body.length) {
-    if (req.params.objectroute === "users")
-      bodyReq = generalHelper.generatePasswordBulk(bodyReq);
+      if (req.params.objectroute === "customers")
+        bodyReq = generalHelper.generatellaveUnicaClienteBulk(bodyReq);
 
-    if (req.params.objectroute === "customers")
-      bodyReq = generalHelper.generatellaveUnicaClienteBulk(bodyReq);
+      databaseFunctionsHelper.bulk_create(objectModel, bodyReq, res);
+    } else {
+      if (req.params.objectroute === "users")
+        bodyReq = generalHelper.generatePasswordSingle(bodyReq);
 
-    databaseFunctionsHelper.bulk_create(objectModel, bodyReq, res);
+      if (req.params.objectroute === "customers")
+        bodyReq = generalHelper.generatellaveUnicaClienteSingle(bodyReq);
+
+      databaseFunctionsHelper
+        .single_create(objectModel, bodyReq)
+        .then((response) => {
+          const result = response.result;
+          const status = response.status;
+          res.json(result).status(status);
+        });
+    }
   } else {
-    if (req.params.objectroute === "users")
-      bodyReq = generalHelper.generatePasswordSingle(bodyReq);
-
-    if (req.params.objectroute === "customers")
-      bodyReq = generalHelper.generatellaveUnicaClienteSingle(bodyReq);
-
-    databaseFunctionsHelper
-      .single_create(objectModel, bodyReq)
-      .then((response) => {
-        const result = response.result;
-        const status = response.status;
-        res.json(result).status(status);
-      });
+    res.json("Only admin can create users").status(401);
   }
 };
 
