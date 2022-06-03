@@ -5,7 +5,6 @@ const frequencyObject = require("../models/frecuencia.model");
 const databaseFunctionsHelper = require("./helpers/database-functions.helper");
 
 const index_logic = async (req, res) => {
-
   /***
    * Validando existencia de la campaña
    */
@@ -28,6 +27,10 @@ const index_logic = async (req, res) => {
   if (!customer.success)
     res.status(customer.status).json({ message: "Customer does not exist" });
 
+  if (customer.result.ListaNegra)
+    res
+      .status(customer.status)
+      .json({ message: "Customer is in a BlackList", send_campaign: true });
   const TODAY_START = new Date();
   TODAY_START.setHours(0, 0, 0, 0);
   const TOMORROW = new Date(TODAY_START);
@@ -47,9 +50,9 @@ const index_logic = async (req, res) => {
       },
     }
   );
-    /**
-     * Validando si existe la frecuencia
-     */
+  /**
+   * Validando si existe la frecuencia
+   */
   if (!frequency.success || frequency.success === undefined) {
     /**
      * si no existe la frecuencia la creamos
@@ -79,7 +82,7 @@ const index_logic = async (req, res) => {
      */
     if (campaign.result.numeroVecesClientesDia > frequency.result.ToquesDia) {
       /**
-       * Si aun no cumple con los toques maximos del dia, le sumamos un toque y 
+       * Si aun no cumple con los toques maximos del dia, le sumamos un toque y
        * regresamos una respuesta de envio.
        */
       frequencyObject
@@ -95,7 +98,7 @@ const index_logic = async (req, res) => {
         });
     } else {
       /**
-       * En caso que ya se hayan cumplido el numero maximo de toques por dia, regresamos 
+       * En caso que ya se hayan cumplido el numero maximo de toques por dia, regresamos
        * un mensaje donde no es permitido enviar el mensaje de campaña.
        */
       res.status(200).json({
