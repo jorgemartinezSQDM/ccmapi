@@ -30,7 +30,7 @@ const index_logic = async (req, res) => {
   if (customer.result.ListaNegra)
     res
       .status(customer.status)
-      .json({ message: "Customer is in a BlackList", send_campaign: true });
+      .json({ message: "Customer is in a BlackList", send_campaign: false });
   const TODAY_START = new Date();
   TODAY_START.setHours(0, 0, 0, 0);
   const TOMORROW = new Date(TODAY_START);
