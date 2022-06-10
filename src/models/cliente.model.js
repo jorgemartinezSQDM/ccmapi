@@ -16,7 +16,9 @@ const Cliente = sequelize.define("Cliente", {
     primaryKey: true
   },
   Tipo_Documento: {
-    type: DataTypes.STRING,
+    type: DataTypes.ENUM({
+      values: ['CC', 'TI', 'CE', 'PA']
+    }),
     allowNull: false,
   },
   Numero_Documento: {

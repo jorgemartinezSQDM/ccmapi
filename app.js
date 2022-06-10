@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const cors = require('cors')
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const app = express();
@@ -21,6 +22,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "src/public")));
 app.use(bodyParser.json({limit: '10mb'}));
+app.use(cors())
 app.use("/api/v1", require("./src/routes/index"));
 
 

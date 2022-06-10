@@ -27,7 +27,7 @@ const single_create = (batabaseObject, record) => {
     });
 };
 
-const getById = (batabaseObject, recordId, res) => {
+/*const getById = (batabaseObject, recordId, res) => {
   batabaseObject
     .findOne({ where: { Id: parseInt(recordId) } })
     .then((result) => {
@@ -42,7 +42,7 @@ const getById = (batabaseObject, recordId, res) => {
     .catch((error) => {
       res.json(error).status(500);
     });
-};
+};*/
 
 const getByAttributes = (batabaseObject, attributes) => {
   return batabaseObject
@@ -121,7 +121,7 @@ const bulk_update = (batabaseObject, index, recordList, length, res) => {
 module.exports = {
   bulk_create,
   single_create,
-  getById,
+  //getById,
   getAll,
   updateOne,
   bulk_update,

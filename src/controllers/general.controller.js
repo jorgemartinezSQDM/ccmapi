@@ -6,7 +6,6 @@ const create = (req, res) => {
   const objectModel = config.ObjectRoute[req.params.objectroute];
   let bodyReq = JSON.parse(JSON.stringify(req.body));
   let continuar = true;
-  console.log()
   if (req.params.objectroute === "users") {
     if (
       process.env.SUPERUSER_USERNAME !== req.headers.userName &&
@@ -83,19 +82,9 @@ const update = (req, res) => {
   }
 };
 const delete_ = (req, res) => {
-  const objectModel = config.ObjectRoute[req.params.objectroute];
-  let bodyReq = JSON.parse(JSON.stringify(req.body));
-
-  if (req.body.length) {
-    if (req.params.objectroute === "users")
-      bodyReq = generalHelper.generatePasswordBulk(bodyReq);
-    databaseFunctionsHelper.bulk_create(objectModel, bodyReq, res);
-  } else {
-    if (req.params.objectroute === "users")
-      bodyReq = generalHelper.generatePasswordSingle(bodyReq);
-    databaseFunctionsHelper.single_create(objectModel, bodyReq, res);
-  }
+  res.json({Message: 'Endpoint no implemented'})
 };
+
 
 module.exports = {
   create,
