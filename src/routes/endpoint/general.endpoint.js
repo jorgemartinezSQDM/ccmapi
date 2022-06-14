@@ -7,7 +7,7 @@ router.get("/:objectroute/retrieve", middleware.tokenVerification, controller.re
 router.get("/:objectroute/:recordid/retrieve", middleware.tokenVerification, controller.retreive);
 router.post("/:objectroute/create", middleware.tokenVerification, controller.create);
 router.put("/:objectroute/update", middleware.tokenVerification, controller.update);
-router.delete("/:objectroute/:recordid/delete", middleware.tokenVerification, controller.delete_);
+router.delete("/:objectroute/delete", middleware.tokenVerification, controller.delete_);
 
 
 module.exports = router;

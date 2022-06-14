@@ -1,7 +1,7 @@
 const userHelper = require("./general.helper");
 
 const bulk_create = (batabaseObject, recordList, res) => {
-  console.log(recordList)
+  console.log(recordList);
   batabaseObject
     .bulkCreate(recordList)
     .then((results) => {
@@ -9,12 +9,11 @@ const bulk_create = (batabaseObject, recordList, res) => {
       res.json(results).status(200);
     })
     .catch((error) => {
-      res.json(error).status(500);
+      res.status(400).json(error);
     });
 };
 
 const single_create = (batabaseObject, record) => {
-
   return batabaseObject
     .create(record)
     .then((result) => {
@@ -63,15 +62,20 @@ const getByAttributes = (batabaseObject, attributes) => {
     });
 };
 
-const getAll = (batabaseObject, res) => {
+const getAll = (batabaseObject, res, page, pageSize) => {
+  const offset = page * pageSize;
+  const limit = pageSize;
+  console.log({ offset, limit });
   batabaseObject
-    .findAll()
+    .findAll({ limit, offset, where: {} })
     .then((result) => {
       result = userHelper.deletePasswordFromResponse(result);
-      res.json(result).status(200);
+      res
+        .json({ Page: page + 1, Total_Records: result.length, records: result })
+        .status(200);
     })
     .catch((error) => {
-      res.json(error).status(500);
+      res.status(400).json(error);
     });
 };
 
@@ -114,10 +118,27 @@ const bulk_update = (batabaseObject, index, recordList, length, res) => {
       }
     })
     .catch((error) => {
-      res.json(error).status(500);
+      res.status(400).json(error);
     });
 };
 
+const deleteById = (batabaseObject, attributes, res) => {
+  batabaseObject;
+  batabaseObject
+    .destroy({
+      where: attributes,
+    })
+    .then((result) => {
+      res
+        .json({
+          Message: "The record have been successfully deleted",
+        })
+        .status(200);
+    })
+    .catch((error) => {
+      res.status(400).json(error);
+    });
+};
 module.exports = {
   bulk_create,
   single_create,
@@ -126,4 +147,5 @@ module.exports = {
   updateOne,
   bulk_update,
   getByAttributes,
+  deleteById,
 };

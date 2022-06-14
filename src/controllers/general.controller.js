@@ -35,11 +35,11 @@ const create = (req, res) => {
         .then((response) => {
           const result = response.result;
           const status = response.status;
-          res.json(result).status(status);
+          res.status(status).json(result);
         });
     }
   } else {
-    res.json("Only admin can create users").status(401);
+    res.status(401).json("Only admin can create users");
   }
 };
 
@@ -51,14 +51,16 @@ const retreive = (req, res) => {
     .then((response) => {
       const result = response.result;
       const status = response.status;
-      res.json(result).status(status);
+      res.status(status).json(result);
     });
 };
 
 const retreiveAll = (req, res) => {
   const objectModel = config.ObjectRoute[req.params.objectroute];
-
-  databaseFunctionsHelper.getAll(objectModel, res);
+  const page = req.query.page ? parseInt(req.query.page) - 1 : 0;
+  const size = req.query.size ? parseInt(req.query.size) : 20;
+  //const page = req.params.
+  databaseFunctionsHelper.getAll(objectModel, res, page, size);
 };
 
 const update = (req, res) => {
@@ -82,9 +84,13 @@ const update = (req, res) => {
   }
 };
 const delete_ = (req, res) => {
-  res.json({Message: 'Endpoint no implemented'})
-};
+  const objectModel = config.ObjectRoute[req.params.objectroute];
+  let bodyReq = JSON.parse(JSON.stringify(req.body));
+  let attributes = { Id: bodyReq.records };
+  
 
+  databaseFunctionsHelper.deleteById(objectModel, attributes, res);
+};
 
 module.exports = {
   create,

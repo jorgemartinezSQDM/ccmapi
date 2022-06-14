@@ -22,6 +22,8 @@ const tokenVerification = (req, res, next) => {
     const authorizationMethod = req.headers.authorization.split(" ")[0];
     const decoded = jwt.verify(authorization, process.env.SECRET_SESSION);
 
+    console.log('decoded => ', decoded)
+
     if (authorizationMethod !== "Bearer") {
       return res.json({message:"Authentication Error"}).status(401);
     }
