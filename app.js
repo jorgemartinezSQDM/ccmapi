@@ -17,11 +17,10 @@ if (config.syncDatabase) {
 require("./bin/config/database");
 
 app.use(logger("dev"));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.json({limit: process.env.LIMIT_SIZE_JSON}));
+app.use(express.urlencoded({ extended: false, limit: process.env.LIMIT_SIZE_URLENCODE }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "src/public")));
-app.use(bodyParser.json({limit: '10mb'}));
 app.use(cors())
 app.use("/api/v1", require("./src/routes/index"));
 

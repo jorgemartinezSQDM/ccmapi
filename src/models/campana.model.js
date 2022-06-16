@@ -34,3 +34,4 @@ frecuencia.belongsTo(Campana, {
 })
 
 module.exports = Campana
+  
