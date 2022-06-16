@@ -24,5 +24,5 @@ app.use(express.static(path.join(__dirname, "src/public")));
 app.use(cors())
 app.use("/api/v1", require("./src/routes/index"));
 
-
+ 
 module.exports = app;
