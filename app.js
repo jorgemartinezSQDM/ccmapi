@@ -15,7 +15,7 @@ if (config.syncDatabase) {
 }
 
 require("./bin/config/database");
-
+ 
 app.use(logger("dev"));
 app.use(express.json({limit: process.env.LIMIT_SIZE_JSON}));
 app.use(express.urlencoded({ extended: false, limit: process.env.LIMIT_SIZE_URLENCODE }));
