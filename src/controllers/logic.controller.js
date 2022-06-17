@@ -37,11 +37,18 @@ const index_logic = async (req, res) => {
       .status(customer.status)
       .json({ message: "Customer is in a BlackList", send_campaign: false });
   } else {
-    const TODAY_START = new Date();
+    let TODAY_START = new Date();
+    if (req.body.createdAt) {
+      TODAY_START = new Date(req.body.createdAt);
+      TODAY_START.setDate(TODAY_START.getDate() + 1);
+    }
     TODAY_START.setHours(0, 0, 0, 0);
     const TOMORROW = new Date(TODAY_START);
     TOMORROW.setDate(TOMORROW.getDate() + 1);
-
+    console.log('=================================')
+    console.log('TODAY_START => ' + TODAY_START)
+    console.log('TOMORROW => ' + TOMORROW)
+    console.log('=================================')
     /***
      * Obtener frecuencia basados en los parametros obtenidos mas la fecha del dia de hoy
      */
@@ -63,11 +70,13 @@ const index_logic = async (req, res) => {
       /**
        * si no existe la frecuencia la creamos
        */
+
       databaseFunctionsHelper
         .single_create(frequencyObject, {
           ClienteId: customer.result.Id,
           CampanaId: campaign.result.Id,
           ToquesDia: 1,
+          createdAt: TODAY_START
         })
         .then((response) => {
           const result = response.result;

@@ -3,7 +3,7 @@ const sequelize = require("../../bin/config/database");
 const frecuencia = require("./frecuencia.model")
 
 const Campana = sequelize.define("Campana", {
-  Nombre_Campaña: {
+  Nombre: {
     type: DataTypes.STRING,
     allowNull: false,
   },
