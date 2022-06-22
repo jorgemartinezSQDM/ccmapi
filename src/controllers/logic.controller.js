@@ -40,7 +40,7 @@ const index_logic = async (req, res) => {
     let TODAY_START = new Date();
     if (req.body.createdAt) {
       TODAY_START = new Date(req.body.createdAt);
-      TODAY_START.setDate(TODAY_START.getDate() + 1);
+      //TODAY_START.setDate(TODAY_START.getDate() + 1);
     }
     TODAY_START.setHours(0, 0, 0, 0);
     const TOMORROW = new Date(TODAY_START);
