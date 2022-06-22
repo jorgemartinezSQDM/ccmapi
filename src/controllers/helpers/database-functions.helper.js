@@ -6,7 +6,7 @@ const bulk_create = (batabaseObject, recordList, res) => {
     .bulkCreate(recordList)
     .then((results) => {
       results = userHelper.deletePasswordFromResponse(results);
-      res.json(results).status(200);
+      res.status(200).json(results);
     })
     .catch((error) => {
       res.status(400).json(error);
@@ -62,17 +62,17 @@ const getByAttributes = (batabaseObject, attributes) => {
     });
 };
 
-const getAll = (batabaseObject, res, page, pageSize) => {
+const getAll = (batabaseObject, res, page, pageSize, where) => {
   const offset = page * pageSize;
   const limit = pageSize;
-  console.log({ offset, limit });
   batabaseObject
-    .findAll({ limit, offset, where: {} })
+    .findAll({ limit, offset, where: where })
     .then((result) => {
       result = userHelper.deletePasswordFromResponse(result);
-      res
-        .json({ Page: page + 1, Total_Records: result.length, records: result })
-        .status(200);
+      const Next_Page = pageSize === result.length
+      res.status(200)
+        .json({ Page: page + 1, Total_Records: result.length, Next_Page, Records: result })
+        
     })
     .catch((error) => {
       res.status(400).json(error);
@@ -107,12 +107,12 @@ const bulk_update = (batabaseObject, index, recordList, length, res) => {
     })
     .then((result) => {
       if (length - 1 === index) {
-        res
+        res.status(200)
           .json({
             Message: "The records have been successfully updated",
             Records_Updated: length,
           })
-          .status(200);
+          
       } else {
         bulk_update(batabaseObject, index + 1, recordList, length, res);
       }
@@ -129,11 +129,11 @@ const deleteById = (batabaseObject, attributes, res) => {
       where: attributes,
     })
     .then((result) => {
-      res
+      res.status(200)
         .json({
           Message: "The record have been successfully deleted",
         })
-        .status(200);
+        
     })
     .catch((error) => {
       res.status(400).json(error);

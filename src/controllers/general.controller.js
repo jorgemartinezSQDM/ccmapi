@@ -59,8 +59,27 @@ const retreiveAll = (req, res) => {
   const objectModel = config.ObjectRoute[req.params.objectroute];
   const page = req.query.page ? parseInt(req.query.page) - 1 : 0;
   const size = req.query.size ? parseInt(req.query.size) : 20;
-  //const page = req.params.
-  databaseFunctionsHelper.getAll(objectModel, res, page, size);
+
+  let params = JSON.parse(JSON.stringify(req.query));
+  delete params.page;
+  delete params.size;
+  /*console.log("params => ", params);
+  Object.keys(params).map((item) => {
+    console.log(
+      "(params[item]).toLowerCase().trim() => ",
+      params[item].toLowerCase().trim()
+    );
+
+    const value = params[item];
+    console.log("/[a-zA-Z]/.test(value) => ", /[a-zA-Z]/.test(value));
+    const namefield = objectModel.tableAttributes[item].type.constructor.key;
+
+    if (namefield === "INTEGER" && !/[a-zA-Z]/.test(value)) {
+      params[item] = parseInt(params[item]);
+    } 
+  });
+  console.log("params => ", params);*/
+  databaseFunctionsHelper.getAll(objectModel, res, page, size, params);
 };
 
 const update = (req, res) => {
@@ -87,7 +106,6 @@ const delete_ = (req, res) => {
   const objectModel = config.ObjectRoute[req.params.objectroute];
   let bodyReq = JSON.parse(JSON.stringify(req.body));
   let attributes = { Id: bodyReq.records };
-  
 
   databaseFunctionsHelper.deleteById(objectModel, attributes, res);
 };

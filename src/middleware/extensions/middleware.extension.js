@@ -22,11 +22,11 @@ const userVerification = async (username, password, res, next) => {
     const user = await userSchema.findOne({ where: {NombreUsuario: username}})
     if (!user) {
         
-        return res.json({message:"username or password incorrect"}).status(401)
+        return res.status(401).json({message:"username or password incorrect"})
     }
 
     if (!userHelper.comparePassword(password, user.Contrasena)) {
-        return res.json({message:"username or password incorrect"}).status(401)
+        return res.status(401).json({message:"username or password incorrect"})
     }
 
     next()
