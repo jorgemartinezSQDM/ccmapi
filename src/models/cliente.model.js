@@ -2,7 +2,7 @@ const { DataTypes} = require("sequelize");
 const sequelize = require("../../bin/config/database");
 const frecuencia = require("./frecuencia.model")
 
-const Cliente = sequelize.define("Cliente", {
+const Cliente = sequelize.define("cliente", {
   Nombres: {
     type: DataTypes.STRING,
     allowNull: false,

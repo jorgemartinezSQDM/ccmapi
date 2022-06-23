@@ -63,23 +63,39 @@ const retreiveAll = (req, res) => {
   let params = JSON.parse(JSON.stringify(req.query));
   delete params.page;
   delete params.size;
-  /*console.log("params => ", params);
-  Object.keys(params).map((item) => {
-    console.log(
-      "(params[item]).toLowerCase().trim() => ",
-      params[item].toLowerCase().trim()
-    );
 
-    const value = params[item];
-    console.log("/[a-zA-Z]/.test(value) => ", /[a-zA-Z]/.test(value));
-    const namefield = objectModel.tableAttributes[item].type.constructor.key;
 
-    if (namefield === "INTEGER" && !/[a-zA-Z]/.test(value)) {
-      params[item] = parseInt(params[item]);
-    } 
-  });
-  console.log("params => ", params);*/
-  databaseFunctionsHelper.getAll(objectModel, res, page, size, params);
+  if (req.params.objectroute == "frecuencies") {
+
+    console.log("params => ", params);
+    let query = ''
+    Object.keys(params).map((item) => {
+      /*console.log(
+        "(params[item]).toLowerCase().trim() => ",
+        params[item].toLowerCase().trim()
+      );
+      
+
+      const value = params[item];
+      console.log("/[a-zA-Z]/.test(value) => ", /[a-zA-Z]/.test(value));
+      const namefield = objectModel.tableAttributes[item].type.constructor.key;
+
+      if (namefield === "INTEGER" && !/[a-zA-Z]/.test(value)) {
+        params[item] = parseInt(params[item]);
+      }*/
+    
+      if(item === 'campanaId') query += '"campanas"."Id" = ' + parseInt(params[item]) + ' AND '
+
+      if(item === 'clienteId') query += '"clientes"."Id" = ' + parseInt(params[item]) + ' AND '
+    
+    
+    });
+    query = query.substring(0, query.length - 5);
+    
+    databaseFunctionsHelper.rawQuery(res, query);
+  } else {
+    databaseFunctionsHelper.getAll(objectModel, res, page, size, params);
+  }
 };
 
 const update = (req, res) => {
