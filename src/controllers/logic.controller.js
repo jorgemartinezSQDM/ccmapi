@@ -12,6 +12,9 @@ const index_logic_helper = async (args, res, caparam) => {
   /***
    * Validando existencia de la campaña
    */
+  console.log("_____________________________")
+  console.log('args => ', args)
+  console.log("_____________________________")
   const campaign = await databaseFunctionsHelper.getByAttributes(
     campaignObject,
     { ExternalId: args.campana }
