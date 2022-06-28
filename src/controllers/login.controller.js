@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
  * @param {*} req 
  * @param {*} res 
  */
-
+ 
 const login = (req, res) => {
   const authorization = req.headers.authorization.split(" ")[1];
 

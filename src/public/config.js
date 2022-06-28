@@ -17,7 +17,7 @@ export default {
     execute: {
       inArguments: [],
       outArguments: [],
-      url: "https://ccmcustomactvity.herokuapp.com/execute/",
+      url: "https://ccm-api-ca.herokuapp.com/execute/",
       verb: "POST",
       body: "",
       header: "",
@@ -29,22 +29,22 @@ export default {
   configurationArguments: {
     applicationExtensionKey: "e5fb3ffb-3510-46f2-baa6-0a720fdad3c6",
     save: {
-      url: "https://ccmcustomactvity.herokuapp.com/save/",
+      url: "https://ccm-api-ca.herokuapp.com/save/",
       verb: "POST",
       useJwt: true,
     },
     publish: {
-      url: "https://ccmcustomactvity.herokuapp.com/publish",
+      url: "https://ccm-api-ca.herokuapp.com/publish",
       verb: "POST",
       useJwt: true,
     },
     stop: {
-      url: "https://ccmcustomactvity.herokuapp.com/stop",
+      url: "https://ccm-api-ca.herokuapp.com/stop",
       verb: "POST",
       useJwt: true,
     },
     validate: {
-      url: "https://ccmcustomactvity.herokuapp.com/validate",
+      url: "https://ccm-api-ca.herokuapp.com/validate",
       verb: "POST",
       useJwt: true,
     },
