@@ -74,8 +74,11 @@ define(["postmonger"], function (Postmonger) {
     var inArgs = [];
     var arg = {};
     //arg.nombre = '{{Event.' + eventDefinitionKey +'.numero_doc}}'
-    arg.tipo_doc = '{{Event.' + eventDefinitionKey +'.tipo_doc}}'
-    arg.numero_doc = '{{Event.' + eventDefinitionKey +'.numero_doc}}'
+    arg.Tipo_Documento = '{{Event.' + eventDefinitionKey +'.Tipo_Documento}}'
+    arg.Numero_Documento = '{{Event.' + eventDefinitionKey +'.Numero_Documento}}'
+    arg.Cod_Campana = '{{Event.' + eventDefinitionKey +'.Cod_Campana}}'
+    arg.Email = '{{Event.' + eventDefinitionKey +'.Email}}'
+    
     inArgs.push(arg);
     payload["arguments"].execute.inArguments = inArgs;
     payload["metaData"].isConfigured = true;
