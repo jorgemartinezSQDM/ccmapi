@@ -23,8 +23,9 @@ const save = function (req, res) {
  */
 const execute = async function (req, res) {
   const jwt = req.body.toString("utf8"); //esto se recibe por parametro
-
-  
+  console.log("-----------------------");
+  console.log('jwt => ' + jwt)
+  console.log("-----------------------");
   /*request(
     {
       method: "POST",
@@ -47,6 +48,9 @@ const execute = async function (req, res) {
 
       //res.status(200).json({ branchResult: "notsent" });
       res.status(200).json({ branchResult: "sent" });
+    }
+    if (err){
+      res.status(200).json({ branchResult: "notsent" });
     }
   });
   //res.status(200).json({ branchResult: "sent" });
