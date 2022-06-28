@@ -12,7 +12,7 @@ console.log("Port: ", process.env.PORT); // Show which PORT is in use.
 
 // ─── DATABASE ───────────────────────────────────────────────────────────────────
 
-const syncDatabase = true;
+const syncDatabase = process.env.SYNC_DATABASE;
 /*console.log({
   DATABASE: {
     PG_USER: process.env.PG_USER,
