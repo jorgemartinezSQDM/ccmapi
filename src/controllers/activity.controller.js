@@ -1,4 +1,5 @@
 const { JWT } = require("./helpers/activity.helper");
+const logic_controller = require("./logic.controller")
 
 /*
  * POST Handler for / route of Activity (this is the edit route).
@@ -40,14 +41,20 @@ const execute = async function (req, res) {
     if (decoded && decoded.inArguments && decoded.inArguments.length > 0) {
       var decodedArgs = decoded.inArguments[0];
 
-      console.log("-----------------------");
+      //console.log("-----------------------");
 
       console.log('decodedArgs => ', decodedArgs);
-      console.log("-----------------------");
+      const args = {
+        campana: decodedArgs.cod_campana,
+        tipo_documento: decodedArgs.tipo_documento,
+        numero_documento: decodedArgs.numero_documento
+      }
+      logic_controller.index_logic_helper(args, res, true)
+      //console.log("-----------------------");
       //decodedArgs.nombre esta esla variable declarada en el customactivity.js metodo save
 
       //res.status(200).json({ branchResult: "notsent" });
-      res.status(200).json({ branchResult: "sent" });
+      //res.status(200).json({ branchResult: "sent" });
     }
     if (err){
       res.status(200).json({ branchResult: "notsent" });

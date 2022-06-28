@@ -5,50 +5,61 @@ const frequencyObject = require("../models/frecuencia.model");
 const databaseFunctionsHelper = require("./helpers/database-functions.helper");
 
 const index_logic = async (req, res) => {
+  index_logic_helper(req.body, res, false);
+};
+
+const index_logic_helper = async (args, res, caparam) => {
   /***
    * Validando existencia de la campaña
    */
   const campaign = await databaseFunctionsHelper.getByAttributes(
     campaignObject,
-    { ExternalId: req.body.campana }
+    { ExternalId: args.campana }
   );
-  if (!campaign.success)
-    res
-      .status(campaign.status)
-      .json({ message: "Campaign does not exist", send_campaign: false });
+  if (!campaign.success) {
+    let response = { message: "Campaign does not exist", send_campaign: false };
+    if (caparam) response = { branchResult: "notsent" };
+    res.status(campaign.status).json(response);
+  }
+
   /***
    * Validando existencia del cliente
    */
   const customer = await databaseFunctionsHelper.getByAttributes(
     customerObject,
     {
-      Tipo_Documento: req.body.tipo_documento,
-      Numero_Documento: req.body.numero_documento,
+      Tipo_Documento: args.tipo_documento,
+      Numero_Documento: args.numero_documento,
     }
   );
   if (!customer.success) {
-    res
-      .status(customer.status)
-      .json({ message: "Customer does not exist", send_campaign: false });
+    let response = { message: "Customer does not exist", send_campaign: false };
+    if (caparam) response = { branchResult: "notsent" };
+    res.status(customer.status).json(response);
   }
 
   if (customer.result.ListaNegra) {
-    res
-      .status(customer.status)
-      .json({ message: "Customer is in a BlackList", send_campaign: false });
+    let response = {
+      message: "Customer is in a BlackList",
+      send_campaign: false,
+    };
+
+    if (caparam) response = { branchResult: "notsent" };
+
+    res.status(customer.status).json(response);
   } else {
     let TODAY_START = new Date();
-    if (req.body.createdAt) {
-      TODAY_START = new Date(req.body.createdAt);
+    if (args.createdAt) {
+      TODAY_START = new Date(args.createdAt);
       //TODAY_START.setDate(TODAY_START.getDate() + 1);
     }
     TODAY_START.setHours(0, 0, 0, 0);
     const TOMORROW = new Date(TODAY_START);
     TOMORROW.setDate(TOMORROW.getDate() + 1);
-    console.log('=================================')
-    console.log('TODAY_START => ' + TODAY_START)
-    console.log('TOMORROW => ' + TOMORROW)
-    console.log('=================================')
+    console.log("=================================");
+    console.log("TODAY_START => " + TODAY_START);
+    console.log("TOMORROW => " + TOMORROW);
+    console.log("=================================");
     /***
      * Obtener frecuencia basados en los parametros obtenidos mas la fecha del dia de hoy
      */
@@ -70,23 +81,23 @@ const index_logic = async (req, res) => {
       /**
        * si no existe la frecuencia la creamos
        */
+      let responseSer = {
+        message: "A frequency has been created.",
+        send_campaign: true,
+      };
 
+      if (caparam) responseSer = { branchResult: "sent" };
       databaseFunctionsHelper
         .single_create(frequencyObject, {
           ClienteId: customer.result.Id,
           CampanaId: campaign.result.Id,
           ToquesDia: 1,
-          createdAt: TODAY_START
+          createdAt: TODAY_START,
         })
         .then((response) => {
           const result = response.result;
           const status = response.status;
-          res
-            .json({
-              message: "A frequency has been created.",
-              send_campaign: true,
-            })
-            .status(status);
+          res.json(responseSer).status(status);
         })
         .catch((error) => {
           res.status(500).json(error);
@@ -100,13 +111,16 @@ const index_logic = async (req, res) => {
          * Si aun no cumple con los toques maximos del dia, le sumamos un toque y
          * regresamos una respuesta de envio.
          */
+        let responseSer = {
+          message: "Increase in frequency.",
+          send_campaign: true,
+        };
+
+        if (caparam) responseSer = { branchResult: "sent" };
         frequencyObject
           .increment({ ToquesDia: 1 }, { where: { Id: frequency.result.Id } })
           .then((result) => {
-            res.status(200).json({
-              message: "Increase in frequency.",
-              send_campaign: true,
-            });
+            res.status(200).json(responseSer);
           })
           .catch((error) => {
             res.status(500).json(error);
@@ -116,11 +130,15 @@ const index_logic = async (req, res) => {
          * En caso que ya se hayan cumplido el numero maximo de toques por dia, regresamos
          * un mensaje donde no es permitido enviar el mensaje de campaña.
          */
-        res.status(200).json({
+
+        let responseSer = {
           message:
             "No more messages of these campaigns can be sent to the client for today.",
           send_campaign: false,
-        });
+        };
+
+        if (caparam) responseSer = { branchResult: "sent" };
+        res.status(200).json(responseSer);
       }
     }
   }
@@ -128,4 +146,5 @@ const index_logic = async (req, res) => {
 
 module.exports = {
   index_logic,
+  index_logic_helper,
 };
