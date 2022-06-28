@@ -25,7 +25,7 @@ define(["postmonger"], function (Postmonger) {
 
   function initialize(data) {
     console.log('____________________________')
-    console.log('hola mundo' + eventDefinitionKey)
+    console.log('hola mundo => ' + eventDefinitionKey)
     console.log('____________________________')
     if (data) {
       payload = data;
