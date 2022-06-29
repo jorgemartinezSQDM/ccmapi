@@ -53,7 +53,10 @@ export default {
     {
       arguments: {
         branchResult: "sent",
-      }
+      },
+      metaData: {
+        label: "Sent",
+      },
     },
     {
       arguments: {
