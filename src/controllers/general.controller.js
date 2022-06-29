@@ -36,6 +36,7 @@ const create = (req, res) => {
           const result = response.result;
           const status = response.status;
           res.status(status).json(result);
+          return;
         });
     }
   } else {
@@ -52,6 +53,7 @@ const retreive = (req, res) => {
       const result = response.result;
       const status = response.status;
       res.status(status).json(result);
+      return;
     });
 };
 

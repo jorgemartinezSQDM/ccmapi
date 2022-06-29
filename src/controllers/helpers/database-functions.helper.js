@@ -9,9 +9,11 @@ const bulk_create = (batabaseObject, recordList, res) => {
     .then((results) => {
       results = userHelper.deletePasswordFromResponse(results);
       res.status(200).json(results);
+      return;
     })
     .catch((error) => {
       res.status(400).json(error);
+      return;
     });
 };
 
@@ -77,9 +79,11 @@ const rawQuery = (res, query) => {
     .query(query)
     .then((results, metadata) => {
       res.status(200).json({ results: results[0], metadata });
+      return;
     })
     .catch((error) => {
       res.status(401).json(error);
+      return;
     });
 };
 const getAll = (batabaseObject, res, page, pageSize, where) => {
@@ -96,9 +100,11 @@ const getAll = (batabaseObject, res, page, pageSize, where) => {
         Next_Page,
         Records: result,
       });
+      return;
     })
     .catch((error) => {
       res.status(400).json(error);
+      return;
     });
 };
 
@@ -113,9 +119,11 @@ const updateOne = (batabaseObject, recordId, record, res) => {
       res
         .json({ Message: "The record has been successfully updated" })
         .status(200);
+      return;
     })
     .catch((error) => {
       res.json(error).status(500);
+      return;
     });
 };
 
@@ -134,12 +142,14 @@ const bulk_update = (batabaseObject, index, recordList, length, res) => {
           Message: "The records have been successfully updated",
           Records_Updated: length,
         });
+        return;
       } else {
         bulk_update(batabaseObject, index + 1, recordList, length, res);
       }
     })
     .catch((error) => {
       res.status(400).json(error);
+      return;
     });
 };
 
@@ -153,9 +163,11 @@ const deleteById = (batabaseObject, attributes, res) => {
       res.status(200).json({
         Message: "The record have been successfully deleted",
       });
+      return;
     })
     .catch((error) => {
       res.status(400).json(error);
+      return;
     });
 };
 module.exports = {
