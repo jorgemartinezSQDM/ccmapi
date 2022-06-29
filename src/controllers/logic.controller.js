@@ -12,9 +12,9 @@ const index_logic_helper = async (args, res, caparam) => {
   /***
    * Validando existencia de la campaña
    */
-  console.log("_____________________________")
+  /*console.log("_____________________________")
   console.log('args => ', args)
-  console.log("_____________________________")
+  console.log("_____________________________")*/
   const campaign = await databaseFunctionsHelper.getByAttributes(
     campaignObject,
     { ExternalId: args.campana }
@@ -62,10 +62,10 @@ const index_logic_helper = async (args, res, caparam) => {
     TODAY_START.setHours(0, 0, 0, 0);
     const TOMORROW = new Date(TODAY_START);
     TOMORROW.setDate(TOMORROW.getDate() + 1);
-    console.log("=================================");
+    /*console.log("=================================");
     console.log("TODAY_START => " + TODAY_START);
     console.log("TOMORROW => " + TOMORROW);
-    console.log("=================================");
+    console.log("=================================");*/
     /***
      * Obtener frecuencia basados en los parametros obtenidos mas la fecha del dia de hoy
      */

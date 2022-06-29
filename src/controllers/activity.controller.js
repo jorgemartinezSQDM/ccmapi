@@ -6,7 +6,7 @@ const logic_controller = require("./logic.controller")
  */
 const edit = function (req, res) {
   // Data from the req and put it in an array accessible to the main app.
-  //console.log( req.body );
+  ////console.log( req.body );
   //logData(req);
   res.status(200).send("Edit");
 };
@@ -15,7 +15,7 @@ const edit = function (req, res) {
  */
 const save = function (req, res) {
   // Data from the req and put it in an array accessible to the main app.
-  //console.log( req.body );
+  ////console.log( req.body );
   //logData(req);
   res.status(200).send("Save");
 };
@@ -24,9 +24,9 @@ const save = function (req, res) {
  */
 const execute = async function (req, res) {
   const jwt = req.body.toString("utf8"); //esto se recibe por parametro
-  console.log("-----------------------");
-  console.log('jwt => ' + jwt)
-  console.log("-----------------------");
+  //console.log("-----------------------");
+  //console.log('jwt => ' + jwt)
+  //console.log("-----------------------");
   /*request(
     {
       method: "POST",
@@ -34,29 +34,30 @@ const execute = async function (req, res) {
       body: jwt,
     },
     function (error, response) {
-      console.log(response);
+      //console.log(response);
     }
   );*/
   JWT(jwt, process.env.jwtSecret, async (err, decoded) => {
     if (decoded && decoded.inArguments && decoded.inArguments.length > 0) {
       var decodedArgs = decoded.inArguments[0];
 
-      //console.log("-----------------------");
+      ////console.log("-----------------------");
 
-      console.log('decodedArgs => ', decodedArgs);
+      //console.log('decodedArgs => ', decodedArgs);
       const args = {
         campana: decodedArgs.cod_campana,
         tipo_documento: decodedArgs.tipo_documento,
         numero_documento: decodedArgs.numero_documento
       }
       logic_controller.index_logic_helper(args, res, true)
-      //console.log("-----------------------");
+      ////console.log("-----------------------");
       //decodedArgs.nombre esta esla variable declarada en el customactivity.js metodo save
 
       //res.status(200).json({ branchResult: "notsent" });
       //res.status(200).json({ branchResult: "sent" });
     } else if (err){
       res.status(200).json({ branchResult: "notsent" });
+      return;
     }
   });
   //res.status(200).json({ branchResult: "sent" });
@@ -82,7 +83,7 @@ const stop = function (req, res) {
  */
 const validate = function (req, res) {
   // Data from the req and put it in an array accessible to the main app.
-  //console.log( req.body );
+  ////console.log( req.body );
   //logData(req);
   res.status(200).send("Validate");
 };
