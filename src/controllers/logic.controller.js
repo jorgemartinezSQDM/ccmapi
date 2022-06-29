@@ -25,7 +25,7 @@ const index_logic_helper = async (args, res, caparam) => {
     console.log("25--------------------------");
     console.log(response);
     console.log("--------------------------");
-    res.status(500).json(response);
+    res.status(401).json(response);
     return;
   }
 
