@@ -152,12 +152,9 @@ const index_logic_helper = async (args, res, caparam) => {
             return;
           })
           .catch((error) => {
-            let responseSer = error;
-            let status = 500;
-            if (caparam) {
-              responseSer = { branchResult: "notsent" };
-              status = 200;
-            }
+            let responseSer = caparam ? { branchResult: "notsent" } : error;
+            let status = caparam ? 200 :500;
+           
             res.status(status).json(responseSer);
             return;
           });
