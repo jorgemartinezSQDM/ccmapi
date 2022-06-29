@@ -23,6 +23,7 @@ const index_logic_helper = async (args, res, caparam) => {
     let response = { message: "Campaign does not exist", send_campaign: false };
     if (caparam) response = { branchResult: "notsent" };
     res.status(campaign.status).json(response);
+    return;
   }
 
   /***
@@ -39,6 +40,7 @@ const index_logic_helper = async (args, res, caparam) => {
     let response = { message: "Customer does not exist", send_campaign: false };
     if (caparam) response = { branchResult: "notsent" };
     res.status(customer.status).json(response);
+    return;
   }
 
   if (customer.result.ListaNegra) {
@@ -50,6 +52,7 @@ const index_logic_helper = async (args, res, caparam) => {
     if (caparam) response = { branchResult: "notsent" };
 
     res.status(customer.status).json(response);
+    return;
   } else {
     let TODAY_START = new Date();
     if (args.createdAt) {
@@ -101,9 +104,11 @@ const index_logic_helper = async (args, res, caparam) => {
           const result = response.result;
           const status = response.status;
           res.json(responseSer).status(status);
+          return;
         })
         .catch((error) => {
           res.status(500).json(error);
+          return;
         });
     } else {
       /***
@@ -124,9 +129,11 @@ const index_logic_helper = async (args, res, caparam) => {
           .increment({ ToquesDia: 1 }, { where: { Id: frequency.result.Id } })
           .then((result) => {
             res.status(200).json(responseSer);
+            return;
           })
           .catch((error) => {
             res.status(500).json(error);
+            return;
           });
       } else {
         /**
@@ -142,6 +149,7 @@ const index_logic_helper = async (args, res, caparam) => {
 
         if (caparam) responseSer = { branchResult: "sent" };
         res.status(200).json(responseSer);
+        return;
       }
     }
   }
