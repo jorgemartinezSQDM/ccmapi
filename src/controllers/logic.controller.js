@@ -22,7 +22,7 @@ const index_logic_helper = async (args, res, caparam) => {
   if (!campaign.success) {
     let response = { message: "Campaign does not exist", send_campaign: false };
     if (caparam) response = { branchResult: "notsent" };
-    res.status(401).json(response);
+    res.status(campaign.status).json(response);
     return;
   }
 
@@ -39,7 +39,7 @@ const index_logic_helper = async (args, res, caparam) => {
   if (!customer.success) {
     let response = { message: "Customer does not exist", send_campaign: false };
     if (caparam) response = { branchResult: "notsent" };
-    res.status(401).json(response);
+    res.status(customer.status).json(response);
     return;
   }
 
@@ -51,7 +51,7 @@ const index_logic_helper = async (args, res, caparam) => {
 
     if (caparam) response = { branchResult: "notsent" };
 
-    res.status(401).json(response);
+    res.status(customer.status).json(response);
     return;
   } else {
     let TODAY_START = new Date();
@@ -148,7 +148,7 @@ const index_logic_helper = async (args, res, caparam) => {
         };
 
         if (caparam) responseSer = { branchResult: "notsent" };
-        res.status(401).json(responseSer);
+        res.status(200).json(responseSer);
         return;
       }
     }
