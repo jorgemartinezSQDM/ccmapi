@@ -6,13 +6,6 @@ export default {
     category: "custom"
   },
   type: "REST",
-  lang: {
-    "en-US": {
-      name: "CCM POC CLARO",
-      description: "A custom Journey Builder",
-      step1Label: "Configure Message",
-    },
-  },
   arguments: {
     execute: {
       inArguments: [],
@@ -53,20 +46,26 @@ export default {
     {
       arguments: {
         branchResult: "sent",
-      },
-      metaData: {
-        label: "Sent",
-      },
+      }
     },
     {
       arguments: {
         branchResult: "notsent",
-      },
-      metaData: {
-        label: "Not Sent",
-      },
+      }
     },
   ],
+  lang: {
+    "en-US": {
+      name: "CCM POC CLARO",
+      description: "A custom Activity Journey Builder POC CCM",
+      "i18n_sent": "Sent",
+      "i18n_notsent": "Not Sent"
+    },
+  },
+  "outcomeLabelLanguageMap": {
+    "sent": "i18n_sent",
+    "notsent": "i18n_notsent"
+  },
   userInterfaces: {
     configModal: {
       height: 680,
