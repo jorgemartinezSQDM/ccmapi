@@ -21,7 +21,7 @@ const index_logic_helper = async (args, res, caparam) => {
   );
   if (!campaign.success) {
     let response = { message: "Campaign does not exist", send_campaign: false };
-    if (caparam) response = { branchResult: "notsent" };
+    if (caparam) response = { branchResult: "Not Sent" };
     res.status(campaign.status).json(response);
     return;
   }
@@ -38,7 +38,7 @@ const index_logic_helper = async (args, res, caparam) => {
   );
   if (!customer.success) {
     let response = { message: "Customer does not exist", send_campaign: false };
-    if (caparam) response = { branchResult: "notsent" };
+    if (caparam) response = { branchResult: "Not Sent" };
     res.status(customer.status).json(response);
     return;
   }
@@ -49,7 +49,7 @@ const index_logic_helper = async (args, res, caparam) => {
       send_campaign: false,
     };
 
-    if (caparam) response = { branchResult: "notsent" };
+    if (caparam) response = { branchResult: "Not Sent" };
 
     res.status(customer.status).json(response);
     return;
@@ -92,7 +92,7 @@ const index_logic_helper = async (args, res, caparam) => {
         send_campaign: true,
       };
 
-      if (caparam) responseSer = { branchResult: "sent" };
+      if (caparam) responseSer = { branchResult: "Sent" };
       databaseFunctionsHelper
         .single_create(frequencyObject, {
           ClienteId: customer.result.Id,
@@ -124,7 +124,7 @@ const index_logic_helper = async (args, res, caparam) => {
           send_campaign: true,
         };
 
-        if (caparam) responseSer = { branchResult: "sent" };
+        if (caparam) responseSer = { branchResult: "Sent" };
         frequencyObject
           .increment({ ToquesDia: 1 }, { where: { Id: frequency.result.Id } })
           .then((result) => {
@@ -147,7 +147,7 @@ const index_logic_helper = async (args, res, caparam) => {
           send_campaign: false,
         };
 
-        if (caparam) responseSer = { branchResult: "notsent" };
+        if (caparam) responseSer = { branchResult: "Not Sent" };
         res.status(200).json(responseSer);
         return;
       }
