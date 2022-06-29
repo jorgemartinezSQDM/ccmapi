@@ -21,8 +21,8 @@ const index_logic_helper = async (args, res, caparam) => {
   );
   if (!campaign.success) {
     let response = { message: "Campaign does not exist", send_campaign: false };
-    if (caparam) response = { branchResult: "Not Sent" };
-    console.log("--------------------------");
+    if (caparam) response = { branchResult: "notsent" };
+    console.log("25--------------------------");
     console.log(response);
     console.log("--------------------------");
     res.status(campaign.status).json(response);
@@ -41,8 +41,8 @@ const index_logic_helper = async (args, res, caparam) => {
   );
   if (!customer.success) {
     let response = { message: "Customer does not exist", send_campaign: false };
-    if (caparam) response = { branchResult: "Not Sent" };
-    console.log("--------------------------");
+    if (caparam) response = { branchResult: "notsent" };
+    console.log("45--------------------------");
     console.log(response);
     console.log("--------------------------");
     res.status(customer.status).json(response);
@@ -55,8 +55,8 @@ const index_logic_helper = async (args, res, caparam) => {
       send_campaign: false,
     };
 
-    if (caparam) response = { branchResult: "Not Sent" };
-    console.log("--------------------------");
+    if (caparam) response = { branchResult: "notsent" };
+    console.log("59--------------------------");
     console.log(response);
     console.log("--------------------------");
     res.status(customer.status).json(response);
@@ -100,8 +100,8 @@ const index_logic_helper = async (args, res, caparam) => {
         send_campaign: true,
       };
 
-      if (caparam) responseSer = { branchResult: "Sent" };
-      console.log("--------------------------");
+      if (caparam) responseSer = { branchResult: "sent" };
+      console.log("104--------------------------");
       console.log(responseSer);
       console.log("--------------------------");
       databaseFunctionsHelper
@@ -135,8 +135,8 @@ const index_logic_helper = async (args, res, caparam) => {
           send_campaign: true,
         };
 
-        if (caparam) responseSer = { branchResult: "Sent" };
-        console.log("--------------------------")
+        if (caparam) responseSer = { branchResult: "sent" };
+        console.log("139--------------------------")
         console.log(responseSer)
         console.log("--------------------------")
         frequencyObject
@@ -161,8 +161,8 @@ const index_logic_helper = async (args, res, caparam) => {
           send_campaign: false,
         };
 
-        if (caparam) responseSer = { branchResult: "Not Sent" };
-        console.log("--------------------------")
+        if (caparam) responseSer = { branchResult: "notsent" };
+        console.log("165--------------------------")
         console.log(responseSer)
         console.log("--------------------------")
         res.status(200).json(responseSer);
