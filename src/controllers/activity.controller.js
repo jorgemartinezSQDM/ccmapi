@@ -56,7 +56,7 @@ const execute = async function (req, res) {
       //res.status(200).json({ branchResult: "notsent" });
       //res.status(200).json({ branchResult: "sent" });
     } else if (err){
-      res.status(200).json({ branchResult: "notsent" });
+      res.status(400).json({ branchResult: "notsent" });
       return;
     }
   });
