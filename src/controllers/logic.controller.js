@@ -25,7 +25,7 @@ const index_logic_helper = async (args, res, caparam) => {
     console.log("25--------------------------");
     console.log(response);
     console.log("--------------------------");
-    res.status(401).json(response);
+    res.status(campaign.status).json(response);
     return;
   }
 
@@ -45,7 +45,7 @@ const index_logic_helper = async (args, res, caparam) => {
     console.log("45--------------------------");
     console.log(response);
     console.log("--------------------------");
-    res.status(500).json(response);
+    res.status(customer.status).json(response);
     return;
   }
 
@@ -59,7 +59,7 @@ const index_logic_helper = async (args, res, caparam) => {
     console.log("59--------------------------");
     console.log(response);
     console.log("--------------------------");
-    res.status(500).json(response);
+    res.status(customer.status).json(response);
     return;
   } else {
     let TODAY_START = new Date();
@@ -118,7 +118,13 @@ const index_logic_helper = async (args, res, caparam) => {
           return;
         })
         .catch((error) => {
-          res.status(500).json(error);
+          let responseSer = error;
+          let status = 500;
+          if (caparam) {
+            responseSer = { branchResult: "notsent" };
+            status = 200;
+          }
+          res.status(status).json(responseSer);
           return;
         });
     } else {
@@ -136,9 +142,9 @@ const index_logic_helper = async (args, res, caparam) => {
         };
 
         if (caparam) responseSer = { branchResult: "sent" };
-        console.log("139--------------------------")
-        console.log(responseSer)
-        console.log("--------------------------")
+        console.log("139--------------------------");
+        console.log(responseSer);
+        console.log("--------------------------");
         frequencyObject
           .increment({ ToquesDia: 1 }, { where: { Id: frequency.result.Id } })
           .then((result) => {
@@ -146,7 +152,13 @@ const index_logic_helper = async (args, res, caparam) => {
             return;
           })
           .catch((error) => {
-            res.status(500).json(error);
+            let responseSer = error;
+            let status = 500;
+            if (caparam) {
+              responseSer = { branchResult: "notsent" };
+              status = 200;
+            }
+            res.status(status).json(responseSer);
             return;
           });
       } else {
@@ -162,10 +174,10 @@ const index_logic_helper = async (args, res, caparam) => {
         };
 
         if (caparam) responseSer = { branchResult: "notsent" };
-        console.log("165--------------------------")
-        console.log(responseSer)
-        console.log("--------------------------")
-        res.status(500).json(responseSer);
+        console.log("165--------------------------");
+        console.log(responseSer);
+        console.log("--------------------------");
+        res.status(200).json(responseSer);
         return;
       }
     }
