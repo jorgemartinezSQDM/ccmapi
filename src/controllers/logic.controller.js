@@ -124,7 +124,11 @@ const index_logic_helper = async (args, res, caparam) => {
         })
         .then((response) => {
           const result = response.result;
-          const status = caparam? 200 :response.status;
+          const status = caparam ? 200 :response.status;
+          console.log({response: {
+            status,
+            response: responseSer
+          }})
           //res.status(status).json(responseSer);
           return Promise.resolve({
             status,
