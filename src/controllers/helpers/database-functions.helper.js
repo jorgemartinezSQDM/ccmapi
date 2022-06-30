@@ -3,7 +3,7 @@ const { QueryTypes } = require("sequelize");
 const sequelize = require("../../../bin/config/database");
 
 const bulk_create = (batabaseObject, recordList, res) => {
-  console.log(recordList);
+  //console.log(recordList);
   batabaseObject
     .bulkCreate(recordList)
     .then((results) => {
@@ -122,7 +122,7 @@ const updateOne = (batabaseObject, recordId, record, res) => {
           },
         })
         .then((result) => {
-          console.log("UPDATE", result);
+          //console.log("UPDATE", result);
           res
             .status(200)
             .json({ Message: "The record has been successfully updated" });
@@ -142,8 +142,8 @@ const updateOne = (batabaseObject, recordId, record, res) => {
 const bulk_update = (batabaseObject, index, recordList, length, res, final_response) => {
   const current_record = recordList[index];
   delete current_record.Contrasena;
-  console.log('current_record => ', current_record)
-  console.log('final_response => ', final_response)
+  //console.log('current_record => ', current_record)
+  //console.log('final_response => ', final_response)
   getByAttributes(batabaseObject, { Id: current_record.Id }).then(
     (response) => {
       if (response.success) {
