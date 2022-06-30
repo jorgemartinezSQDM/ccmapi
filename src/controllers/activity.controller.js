@@ -55,7 +55,8 @@ const execute = async function (req, res) {
         console.log("response => " + JSON.stringify(response));
         res.status(response.status).json(response.response);
         console.log("-----------------------");
-        return;
+      }).catch(error => {
+        res.status(200).json({ branchResult: "notsent" });
       })
       
       

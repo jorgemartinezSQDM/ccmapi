@@ -8,8 +8,10 @@ const index_logic = async (req, res) => {
   index_logic_helper(req.body, res, false);
 };
 
-const index_logic_helper = async (args, res, caparam) => {
-  /***
+const index_logic_helper =  (args, res, caparam) => {
+
+  return new Promise (async (resolve, reject) => {
+    /***
    * Validando existencia de la campaña
    */
   /*console.log("_____________________________")
@@ -27,7 +29,7 @@ const index_logic_helper = async (args, res, caparam) => {
     console.log(response);
     console.log("--------------------------");
     //res.status(campaign.status).json(response);
-    return Promise.resolve({
+    return resolve({
       status,
       response,
     });
@@ -51,7 +53,7 @@ const index_logic_helper = async (args, res, caparam) => {
     console.log(response);
     console.log("--------------------------");
     //res.status(customer.status).json(response);
-    return Promise.resolve({
+    return resolve({
       status,
       response,
     });
@@ -68,7 +70,7 @@ const index_logic_helper = async (args, res, caparam) => {
     console.log(response);
     console.log("--------------------------");
     //res.status(customer.status).json(response);
-    return Promise.resolve({
+    return resolve({
       status,
       response,
     });
@@ -125,12 +127,12 @@ const index_logic_helper = async (args, res, caparam) => {
         .then((response) => {
           const result = response.result;
           const status = caparam ? 200 :response.status;
-          console.log({response: {
+          console.log({response:{
             status,
             response: responseSer
           }})
           //res.status(status).json(responseSer);
-          return Promise.resolve({
+          return resolve({
             status,
             response: responseSer
           });
@@ -143,7 +145,7 @@ const index_logic_helper = async (args, res, caparam) => {
             status = 200;
           }
           //res.status(status).json(responseSer);
-          return Promise.resolve({
+          return reject({
             status,
             response: responseSer
           });
@@ -170,7 +172,7 @@ const index_logic_helper = async (args, res, caparam) => {
           .increment({ ToquesDia: 1 }, { where: { Id: frequency.result.Id } })
           .then((result) => {
             //res.status(200).json(responseSer);
-            return Promise.resolve({
+            return resolve({
               status: 200,
               response: responseSer
             })
@@ -180,7 +182,7 @@ const index_logic_helper = async (args, res, caparam) => {
             let status = caparam ? 200 : 500;
 
             //res.status(status).json(responseSer);
-            return Promise.resolve({
+            return reject({
               status,
               response: responseSer
             })
@@ -202,13 +204,15 @@ const index_logic_helper = async (args, res, caparam) => {
         console.log(responseSer);
         console.log("--------------------------");
         //res.status(200).json(responseSer);
-        return Promise.resolve({
+        return resolve({
           status: 200,
           response: responseSer
         })
       }
     }
   }
+  })
+  
 };
 
 module.exports = {
