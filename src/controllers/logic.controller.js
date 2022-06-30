@@ -21,12 +21,16 @@ const index_logic_helper = async (args, res, caparam) => {
   );
   if (!campaign.success) {
     let response = { message: "Campaign does not exist", send_campaign: false };
+    let status = caparam ? 200 : campaign.status;
     if (caparam) response = { branchResult: "notsent" };
     console.log("25--------------------------");
     console.log(response);
     console.log("--------------------------");
-    res.status(campaign.status).json(response);
-    return;
+    //res.status(campaign.status).json(response);
+    return Promise.resolve({
+      status,
+      response,
+    });
   }
 
   /***
@@ -41,12 +45,16 @@ const index_logic_helper = async (args, res, caparam) => {
   );
   if (!customer.success) {
     let response = { message: "Customer does not exist", send_campaign: false };
+    let status = caparam ? 200 : customer.status;
     if (caparam) response = { branchResult: "notsent" };
     console.log("45--------------------------");
     console.log(response);
     console.log("--------------------------");
-    res.status(customer.status).json(response);
-    return;
+    //res.status(customer.status).json(response);
+    return Promise.resolve({
+      status,
+      response,
+    });
   }
 
   if (customer.result.ListaNegra) {
@@ -54,13 +62,16 @@ const index_logic_helper = async (args, res, caparam) => {
       message: "Customer is in a BlackList",
       send_campaign: false,
     };
-
+    let status = caparam ? 200 : customer.status;
     if (caparam) response = { branchResult: "notsent" };
     console.log("59--------------------------");
     console.log(response);
     console.log("--------------------------");
-    res.status(customer.status).json(response);
-    return;
+    //res.status(customer.status).json(response);
+    return Promise.resolve({
+      status,
+      response,
+    });
   } else {
     let TODAY_START = new Date();
     if (args.createdAt) {
@@ -113,9 +124,12 @@ const index_logic_helper = async (args, res, caparam) => {
         })
         .then((response) => {
           const result = response.result;
-          const status = response.status;
-          res.status(status).json(responseSer);
-          return;
+          const status = caparam? 200 :response.status;
+          //res.status(status).json(responseSer);
+          return Promise.resolve({
+            status,
+            response: responseSer
+          });
         })
         .catch((error) => {
           let responseSer = error;
@@ -124,8 +138,11 @@ const index_logic_helper = async (args, res, caparam) => {
             responseSer = { branchResult: "notsent" };
             status = 200;
           }
-          res.status(status).json(responseSer);
-          return;
+          //res.status(status).json(responseSer);
+          return Promise.resolve({
+            status,
+            response: responseSer
+          });
         });
     } else {
       /***
@@ -148,15 +165,21 @@ const index_logic_helper = async (args, res, caparam) => {
         frequencyObject
           .increment({ ToquesDia: 1 }, { where: { Id: frequency.result.Id } })
           .then((result) => {
-            res.status(200).json(responseSer);
-            return;
+            //res.status(200).json(responseSer);
+            return Promise.resolve({
+              status: 200,
+              response: responseSer
+            })
           })
           .catch((error) => {
             let responseSer = caparam ? { branchResult: "notsent" } : error;
-            let status = caparam ? 200 :500;
-           
-            res.status(status).json(responseSer);
-            return;
+            let status = caparam ? 200 : 500;
+
+            //res.status(status).json(responseSer);
+            return Promise.resolve({
+              status,
+              response: responseSer
+            })
           });
       } else {
         /**
@@ -174,8 +197,11 @@ const index_logic_helper = async (args, res, caparam) => {
         console.log("165--------------------------");
         console.log(responseSer);
         console.log("--------------------------");
-        res.status(200).json(responseSer);
-        return;
+        //res.status(200).json(responseSer);
+        return Promise.resolve({
+          status: 200,
+          response: responseSer
+        })
       }
     }
   }

@@ -1,5 +1,6 @@
+const { response } = require("express");
 const { JWT } = require("./helpers/activity.helper");
-const logic_controller = require("./logic.controller")
+const logic_controller = require("./logic.controller");
 
 /*
  * POST Handler for / route of Activity (this is the edit route).
@@ -25,7 +26,7 @@ const save = function (req, res) {
 const execute = async function (req, res) {
   const jwt = req.body.toString("utf8"); //esto se recibe por parametro
   console.log("-----------------------");
-  console.log('jwt => ' + jwt)
+  console.log("jwt => " + jwt);
   //console.log("-----------------------");
   /*request(
     {
@@ -43,14 +44,24 @@ const execute = async function (req, res) {
 
       ////console.log("-----------------------");
 
-      console.log('decodedArgs => ', decodedArgs);
+      console.log("decodedArgs => ", decodedArgs);
       const args = {
         campana: decodedArgs.cod_campana,
         tipo_documento: decodedArgs.tipo_documento,
-        numero_documento: decodedArgs.numero_documento
-      }
+        numero_documento: decodedArgs.numero_documento,
+      };
       logic_controller.index_logic_helper(args, res, true)
-      console.log("-----------------------");
+      .then(response => {
+        console.log("response => " + JSON.stringify(response));
+        res.status(response.status).json(response.response);
+        console.log("-----------------------");
+        return;
+      })
+      
+      
+
+      
+      
       //decodedArgs.nombre esta esla variable declarada en el customactivity.js metodo save
 
       //res.status(200).json({ branchResult: "notsent" });
