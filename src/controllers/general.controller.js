@@ -104,13 +104,8 @@ const update = (req, res) => {
   const objectModel = config.ObjectRoute[req.params.objectroute];
   let bodyReq = JSON.parse(JSON.stringify(req.body));
   if (req.body.length) {
-    databaseFunctionsHelper.bulk_update(
-      objectModel,
-      0,
-      bodyReq,
-      bodyReq.length,
-      res
-    );
+    let final_response = {success: [], errors: []}
+    databaseFunctionsHelper.bulk_update( objectModel, 0, bodyReq, bodyReq.length, res, final_response);
     //*/
   } else {
     const recordId = bodyReq.Id;

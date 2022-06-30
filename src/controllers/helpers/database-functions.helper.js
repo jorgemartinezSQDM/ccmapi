@@ -56,7 +56,11 @@ const getByAttributes = (batabaseObject, attributes) => {
         result = userHelper.deletePasswordFromResponse(result);
         return { result: result, status: 200, success: true }; //res.json(result).status(200);
       } else {
-        return { result: { message: "No data to show" }, status: 404 };
+        return {
+          result: { message: "No data to show" },
+          status: 404,
+          success: false,
+        };
         //res.json({ message: "No data to show" }).status(200);
       }
     })
@@ -109,49 +113,82 @@ const getAll = (batabaseObject, res, page, pageSize, where) => {
 };
 
 const updateOne = (batabaseObject, recordId, record, res) => {
-  batabaseObject
-    .update(record, {
-      where: {
-        Id: recordId,
-      },
-    })
-    .then((result) => {
-      console.log('UPDATE',  result)
-      res
-        .json({ Message: "The record has been successfully updated" })
-        .status(200);
-      return;
-    })
-    .catch((error) => {
-      res.json(error).status(500);
-      return;
-    });
+  getByAttributes(batabaseObject, { Id: recordId }).then((response) => {
+    if (response.success) {
+      batabaseObject
+        .update(record, {
+          where: {
+            Id: recordId,
+          },
+        })
+        .then((result) => {
+          console.log("UPDATE", result);
+          res
+            .status(200)
+            .json({ Message: "The record has been successfully updated" });
+
+          return;
+        })
+        .catch((error) => {
+          res.json(error).status(500);
+          return;
+        });
+    } else {
+      res.status(404).json({ Message: "The record does not exist" });
+    }
+  });
 };
 
-const bulk_update = (batabaseObject, index, recordList, length, res) => {
+const bulk_update = (batabaseObject, index, recordList, length, res, final_response) => {
   const current_record = recordList[index];
   delete current_record.Contrasena;
-  batabaseObject
-    .update(current_record, {
-      where: {
-        Id: current_record.Id,
-      },
-    })
-    .then((result) => {
-      if (length - 1 === index) {
-        res.status(200).json({
-          Message: "The records have been successfully updated",
-          Records_Updated: length,
-        });
-        return;
+  console.log('current_record => ', current_record)
+  console.log('final_response => ', final_response)
+  getByAttributes(batabaseObject, { Id: current_record.Id }).then(
+    (response) => {
+      if (response.success) {
+        batabaseObject
+          .update(current_record, {
+            where: {
+              Id: current_record.Id,
+            },
+          })
+          .then((result) => {
+            final_response.success.push({
+              Id: current_record.Id,
+              Message: "The record has been successfully updated",
+            });
+            if (length - 1 === index) {
+              res.status(200).json({
+                result: final_response,
+                Records_Updated: final_response.success.length,
+              });
+              return;
+            } else {
+              bulk_update( batabaseObject, index + 1, recordList, length, res, final_response);
+            }
+          })
+          .catch((error) => {
+            res.status(400).json(error);
+            return;
+          });
       } else {
-        bulk_update(batabaseObject, index + 1, recordList, length, res);
+        final_response.errors.push({
+          Id: current_record.Id,
+          Message: "The record does not exist",
+        });
+        if (length - 1 === index) {
+          res.status(200).json({
+            result: final_response,
+            Records_Updated: final_response.success.length,
+          });
+          return;
+        } else {
+          bulk_update( batabaseObject, index + 1, recordList, length, res, final_response);
+        }
       }
-    })
-    .catch((error) => {
-      res.status(400).json(error);
-      return;
-    });
+    }
+  );
 };
 
 const deleteById = (batabaseObject, attributes, res) => {
