@@ -6,11 +6,25 @@ const Usuario = sequelize.define("usuario", {
     type: DataTypes.STRING,
     allowNull: false,
     primaryKey: true,
-    unique: true
+    unique: true,
+    validate: {
+      customValidator(value) {
+        if (/^\s*$/.test(value)) {
+          throw new Error("usuario.NombreUsuario cannot be empty");
+        }
+      }
+    }
   },
   Contrasena: {
     type: DataTypes.STRING,
     allowNull: false,
+    validate: {
+      customValidator(value) {
+        if (/^\s*$/.test(value)) {
+          throw new Error("usuario.Contrasena cannot be empty");
+        }
+      }
+    }
   },
   Id: {
     type: DataTypes.INTEGER,

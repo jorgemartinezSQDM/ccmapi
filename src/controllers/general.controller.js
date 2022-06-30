@@ -67,7 +67,7 @@ const retreiveAll = (req, res) => {
   delete params.size;
 
 
-  if (req.params.objectroute == "frecuencies") {
+  if (req.params.objectroute === "frecuencies") {
 
     console.log("params => ", params);
     let query = ''
@@ -116,6 +116,7 @@ const update = (req, res) => {
     const recordId = bodyReq.Id;
     delete bodyReq.Contrasena;
     delete bodyReq.Id;
+    
 
     databaseFunctionsHelper.updateOne(objectModel, recordId, bodyReq, res);
   }

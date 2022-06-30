@@ -53,10 +53,12 @@ const execute = async function (req, res) {
       logic_controller.index_logic_helper(args, res, true)
       .then(response => {
         console.log("response => " + JSON.stringify(response));
-        res.status(response.status).json(response.response);
         console.log("-----------------------");
+        res.status(response.status).json(response.response);
+        return;
       }).catch(error => {
-        res.status(200).json({ branchResult: "notsent" });
+        res.status(400).json({ branchResult: "notsent" });
+        return;
       })
       
       
@@ -68,7 +70,7 @@ const execute = async function (req, res) {
       //res.status(200).json({ branchResult: "notsent" });
       //res.status(200).json({ branchResult: "sent" });
     } else {
-      res.status(200).json({ branchResult: "notsent" });
+      res.status(400).json({ branchResult: "notsent" });
       return;
     }
   });

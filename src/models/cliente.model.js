@@ -6,6 +6,13 @@ const Cliente = sequelize.define("cliente", {
   Nombres: {
     type: DataTypes.STRING,
     allowNull: false,
+    validate: {
+      customValidator(value) {
+        if (/^\s*$/.test(value)) {
+          throw new Error("cliente.Nombres cannot be empty");
+        }
+      }
+    }
   },
   Apellidos: {
     type: DataTypes.STRING,
@@ -24,11 +31,25 @@ const Cliente = sequelize.define("cliente", {
   Numero_Documento: {
     type: DataTypes.STRING,
     allowNull: false,
+    validate: {
+      customValidator(value) {
+        if (/^\s*$/.test(value)) {
+          throw new Error("cliente.Numero_Documento cannot be empty");
+        }
+      }
+    }
   },
   llaveUnicaCliente: {
     type: DataTypes.STRING,
     unique: true,
     allowNull: false,
+    validate: {
+      customValidator(value) {
+        if (/^\s*$/.test(value)) {
+          throw new Error("cliente.llaveUnicaCliente cannot be empty");
+        }
+      }
+    }
   },
   ListaNegra: {
     type: DataTypes.BOOLEAN,

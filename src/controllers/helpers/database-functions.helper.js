@@ -116,6 +116,7 @@ const updateOne = (batabaseObject, recordId, record, res) => {
       },
     })
     .then((result) => {
+      console.log('UPDATE',  result)
       res
         .json({ Message: "The record has been successfully updated" })
         .status(200);

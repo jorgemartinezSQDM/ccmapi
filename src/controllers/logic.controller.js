@@ -142,7 +142,7 @@ const index_logic_helper =  (args, res, caparam) => {
           let status = 500;
           if (caparam) {
             responseSer = { branchResult: "notsent" };
-            status = 200;
+            status = 400;
           }
           //res.status(status).json(responseSer);
           return reject({
@@ -179,7 +179,7 @@ const index_logic_helper =  (args, res, caparam) => {
           })
           .catch((error) => {
             let responseSer = caparam ? { branchResult: "notsent" } : error;
-            let status = caparam ? 200 : 500;
+            let status = caparam ? 400 : 500;
 
             //res.status(status).json(responseSer);
             return reject({
