@@ -70,15 +70,14 @@ const getByAttributes = (batabaseObject, attributes) => {
     });
 };
 
-const rawQuery = (res, query) => {
+const rawQuery = (res, query, pagination) => {
   query =
     'SELECT frecuencia.*, "clientes"."Nombres" AS "Clientes_Nombres", "clientes"."Apellidos" AS "Clientes_Apellidos", ' +
     '"campanas"."Nombre" AS "Campanas_Nombre" ' +
     "FROM frecuencia  " +
     'JOIN "clientes" ON frecuencia."ClienteId" = "clientes"."Id" ' +
     'JOIN "campanas" ON frecuencia."CampanaId" = "campanas"."Id" ' +
-    "WHERE " +
-    query;
+    (query !== "" ? "WHERE " + query + pagination : pagination);
   sequelize
     .query(query)
     .then((results, metadata) => {

@@ -66,11 +66,11 @@ const retreiveAll = (req, res) => {
   delete params.page;
   delete params.size;
 
-
   if (req.params.objectroute === "frecuencies") {
-
-    console.log("params => ", params);
-    let query = ''
+    const offset = page * size;
+    const limit = size;
+    const pagination = " LIMIT " + limit + " OFFSET " + offset;
+    let query = "";
     Object.keys(params).map((item) => {
       /*console.log(
         "(params[item]).toLowerCase().trim() => ",
@@ -85,16 +85,16 @@ const retreiveAll = (req, res) => {
       if (namefield === "INTEGER" && !/[a-zA-Z]/.test(value)) {
         params[item] = parseInt(params[item]);
       }*/
-    
-      if(item === 'campanaId') query += '"campanas"."Id" = ' + parseInt(params[item]) + ' AND '
 
-      if(item === 'clienteId') query += '"clientes"."Id" = ' + parseInt(params[item]) + ' AND '
-    
-    
+      if (item === "campanaId")
+        query += '"campanas"."Id" = ' + parseInt(params[item]) + " AND ";
+
+      if (item === "clienteId")
+        query += '"clientes"."Id" = ' + parseInt(params[item]) + " AND ";
     });
-    query = query.substring(0, query.length - 5);
-    
-    databaseFunctionsHelper.rawQuery(res, query);
+    if (query !== "" ) query = query.substring(0, query.length - 5);
+
+    databaseFunctionsHelper.rawQuery(res, query, pagination);
   } else {
     databaseFunctionsHelper.getAll(objectModel, res, page, size, params);
   }
@@ -104,14 +104,20 @@ const update = (req, res) => {
   const objectModel = config.ObjectRoute[req.params.objectroute];
   let bodyReq = JSON.parse(JSON.stringify(req.body));
   if (req.body.length) {
-    let final_response = {success: [], errors: []}
-    databaseFunctionsHelper.bulk_update( objectModel, 0, bodyReq, bodyReq.length, res, final_response);
+    let final_response = { success: [], errors: [] };
+    databaseFunctionsHelper.bulk_update(
+      objectModel,
+      0,
+      bodyReq,
+      bodyReq.length,
+      res,
+      final_response
+    );
     //*/
   } else {
     const recordId = bodyReq.Id;
     delete bodyReq.Contrasena;
     delete bodyReq.Id;
-    
 
     databaseFunctionsHelper.updateOne(objectModel, recordId, bodyReq, res);
   }
