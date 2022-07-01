@@ -3,9 +3,9 @@
     "metaData": {
         "icon": "images/icon.png",
         "iconSsmall": "images/iconSmall.png",
-        "category": "custom"
+        "category": "message"
     },
-    "type": "REST",
+    "type": "RESTDECISION",
     "lang": {
         "en-US": {
             "name": "CCM POC CLARO",

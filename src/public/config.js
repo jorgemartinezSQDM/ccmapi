@@ -3,9 +3,9 @@ export default {
   metaData: {
     icon: "images/icon.png",
     iconSmall: "images/iconSmall.png",
-    category: "custom"
+    category: "message"
   },
-  type: "REST",
+  type: "RESTDECISION",
   lang: {
     "en-US": {
       name: "CCM POC CLARO",
