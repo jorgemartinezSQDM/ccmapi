@@ -70,7 +70,7 @@ const getByAttributes = (batabaseObject, attributes) => {
     });
 };
 
-const rawQuery = (res, query, pagination) => {
+const rawQuery = (res, query, pagination, page, pageSize) => {
   query =
     'SELECT frecuencia.*, "clientes"."Nombres" AS "Clientes_Nombres", "clientes"."Apellidos" AS "Clientes_Apellidos", ' +
     '"campanas"."Nombre" AS "Campanas_Nombre" ' +
@@ -81,7 +81,14 @@ const rawQuery = (res, query, pagination) => {
   sequelize
     .query(query)
     .then((results, metadata) => {
-      res.status(200).json({ results: results[0], metadata });
+      res
+        .status(200)
+        .json({
+          Page: (page + 1),
+          Total_Records: results[0].length,
+          Next_Page: pageSize === results[0].length,
+          Records: results[0],
+        });
       return;
     })
     .catch((error) => {
@@ -138,7 +145,14 @@ const updateOne = (batabaseObject, recordId, record, res) => {
   });
 };
 
-const bulk_update = (batabaseObject, index, recordList, length, res, final_response) => {
+const bulk_update = (
+  batabaseObject,
+  index,
+  recordList,
+  length,
+  res,
+  final_response
+) => {
   const current_record = recordList[index];
   delete current_record.Contrasena;
   //console.log('current_record => ', current_record)
@@ -164,7 +178,14 @@ const bulk_update = (batabaseObject, index, recordList, length, res, final_respo
               });
               return;
             } else {
-              bulk_update( batabaseObject, index + 1, recordList, length, res, final_response);
+              bulk_update(
+                batabaseObject,
+                index + 1,
+                recordList,
+                length,
+                res,
+                final_response
+              );
             }
           })
           .catch((error) => {
@@ -183,7 +204,14 @@ const bulk_update = (batabaseObject, index, recordList, length, res, final_respo
           });
           return;
         } else {
-          bulk_update( batabaseObject, index + 1, recordList, length, res, final_response);
+          bulk_update(
+            batabaseObject,
+            index + 1,
+            recordList,
+            length,
+            res,
+            final_response
+          );
         }
       }
     }

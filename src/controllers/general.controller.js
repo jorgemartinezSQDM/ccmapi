@@ -94,7 +94,7 @@ const retreiveAll = (req, res) => {
     });
     if (query !== "" ) query = query.substring(0, query.length - 5);
 
-    databaseFunctionsHelper.rawQuery(res, query, pagination);
+    databaseFunctionsHelper.rawQuery(res, query, pagination, page, limit);
   } else {
     databaseFunctionsHelper.getAll(objectModel, res, page, size, params);
   }
