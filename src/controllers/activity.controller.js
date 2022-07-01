@@ -25,26 +25,11 @@ const save = function (req, res) {
  */
 const execute = async function (req, res) {
   const jwt = req.body.toString("utf8"); //esto se recibe por parametro
-  console.log("-----------------------");
-  console.log("jwt => " + jwt);
-  //console.log("-----------------------");
-  /*request(
-    {
-      method: "POST",
-      url: "https://env9nclj3z9o.x.pipedream.net",
-      body: jwt,
-    },
-    function (error, response) {
-      //console.log(response);
-    }
-  );*/
+  
+  
   JWT(jwt, process.env.jwtSecret, async (err, decoded) => {
     if (decoded && decoded.inArguments && decoded.inArguments.length > 0) {
       var decodedArgs = decoded.inArguments[0];
-
-      ////console.log("-----------------------");
-
-      console.log("decodedArgs => ", decodedArgs);
       const args = {
         campana: decodedArgs.cod_campana,
         tipo_documento: decodedArgs.tipo_documento,
@@ -53,7 +38,6 @@ const execute = async function (req, res) {
       logic_controller.index_logic_helper(args, res, true)
       .then(response => {
         console.log("response => " + JSON.stringify(response));
-        console.log("-----------------------");
         res.status(response.status).json(response.response);
         return;
       }).catch(error => {

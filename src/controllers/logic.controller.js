@@ -8,7 +8,6 @@ const index_logic = async (req, res) => {
   index_logic_helper(req.body, res, false)
     .then((response) => {
       console.log("response => " + JSON.stringify(response));
-      console.log("-----------------------");
       res.status(response.status).json(response.response);
       return;
     })
@@ -23,9 +22,7 @@ const index_logic_helper = (args, res, caparam) => {
     /***
      * Validando existencia de la campaña
      */
-    /*console.log("_____________________________")
-  console.log('args => ', args)
-  console.log("_____________________________")*/
+    
     const campaign = await databaseFunctionsHelper.getByAttributes(
       campaignObject,
       { ExternalId: args.campana }
@@ -37,9 +34,7 @@ const index_logic_helper = (args, res, caparam) => {
       };
       let status = caparam ? 200 : campaign.status;
       if (caparam) response = { branchResult: "notsent" };
-      console.log("25--------------------------");
-      console.log(response);
-      console.log("--------------------------");
+      
       //res.status(campaign.status).json(response);
       return resolve({
         status,
@@ -64,9 +59,7 @@ const index_logic_helper = (args, res, caparam) => {
       };
       let status = caparam ? 200 : customer.status;
       if (caparam) response = { branchResult: "notsent" };
-      console.log("45--------------------------");
-      console.log(response);
-      console.log("--------------------------");
+      
       //res.status(customer.status).json(response);
       return resolve({
         status,
@@ -81,9 +74,7 @@ const index_logic_helper = (args, res, caparam) => {
       };
       let status = caparam ? 200 : customer.status;
       if (caparam) response = { branchResult: "notsent" };
-      console.log("59--------------------------");
-      console.log(response);
-      console.log("--------------------------");
+      
       //res.status(customer.status).json(response);
       return resolve({
         status,
@@ -98,10 +89,7 @@ const index_logic_helper = (args, res, caparam) => {
       TODAY_START.setHours(0, 0, 0, 0);
       const TOMORROW = new Date(TODAY_START);
       TOMORROW.setDate(TOMORROW.getDate() + 1);
-      /*console.log("=================================");
-    console.log("TODAY_START => " + TODAY_START);
-    console.log("TOMORROW => " + TOMORROW);
-    console.log("=================================");*/
+      
       /***
        * Obtener frecuencia basados en los parametros obtenidos mas la fecha del dia de hoy
        */
@@ -129,9 +117,7 @@ const index_logic_helper = (args, res, caparam) => {
         };
 
         if (caparam) responseSer = { branchResult: "sent" };
-        console.log("104--------------------------");
-        console.log(responseSer);
-        console.log("--------------------------");
+        
         databaseFunctionsHelper
           .single_create(frequencyObject, {
             ClienteId: customer.result.Id,
@@ -142,12 +128,7 @@ const index_logic_helper = (args, res, caparam) => {
           .then((response) => {
             const result = response.result;
             const status = caparam ? 200 : response.status;
-            console.log({
-              response: {
-                status,
-                response: responseSer,
-              },
-            });
+            
             //res.status(status).json(responseSer);
             return resolve({
               status,
@@ -184,9 +165,7 @@ const index_logic_helper = (args, res, caparam) => {
           };
 
           if (caparam) responseSer = { branchResult: "sent" };
-          console.log("139--------------------------");
-          console.log(responseSer);
-          console.log("--------------------------");
+          
           frequencyObject
             .increment({ ToquesDia: 1 }, { where: { Id: frequency.result.Id } })
             .then((result) => {
@@ -219,9 +198,7 @@ const index_logic_helper = (args, res, caparam) => {
           };
 
           if (caparam) responseSer = { branchResult: "notsent" };
-          console.log("165--------------------------");
-          console.log(responseSer);
-          console.log("--------------------------");
+          
           //res.status(200).json(responseSer);
           return resolve({
             status: 200,
