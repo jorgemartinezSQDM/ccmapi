@@ -81,14 +81,12 @@ const rawQuery = (res, query, pagination, page, pageSize) => {
   sequelize
     .query(query)
     .then((results, metadata) => {
-      res
-        .status(200)
-        .json({
-          Page: (page + 1),
-          Total_Records: results[0].length,
-          Next_Page: pageSize === results[0].length,
-          Records: results[0],
-        });
+      res.status(200).json({
+        Page: page + 1,
+        Total_Records: results[0].length,
+        Next_Page: pageSize === results[0].length,
+        Records: results[0],
+      });
       return;
     })
     .catch((error) => {
@@ -219,15 +217,21 @@ const bulk_update = (
 };
 
 const deleteById = (batabaseObject, attributes, res) => {
-  batabaseObject;
   batabaseObject
     .destroy({
       where: attributes,
     })
     .then((result) => {
-      res.status(200).json({
-        Message: "The record have been successfully deleted",
-      });
+      
+      if (!result) {
+        return res.status(404).send({ Message: "No record(s) found(s)" });
+      } else {
+        res.status(200).json({
+          deleted_records: result,
+          Message: "The record(s) have been successfully deleted",
+        });
+      }
+
       return;
     })
     .catch((error) => {
