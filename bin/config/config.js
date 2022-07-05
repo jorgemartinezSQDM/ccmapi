@@ -1,5 +1,3 @@
-console.log(process.env.NODE_ENV)
-
 if (process.env.NODE_ENV !== "production") require("dotenv").config(); // allows to obtain the environment variable of .env
 
 // ─── PORT ───────────────────────────────────────────────────────────────────────
