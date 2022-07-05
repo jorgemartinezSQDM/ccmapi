@@ -1,2 +1,1 @@
-web: pm2 start app.js
-
+web: npm start
