@@ -1,7 +1,7 @@
 module.exports = {
   apps: [
     {
-      name: "app",
+      name: "CCM API app",
       script: "./bin/www",
       instances: "max",
       env: {
