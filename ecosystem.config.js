@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: "CCM API app",
-      script: "./app.js",
+      script: "./bin/www",
       instances: "max",
       env: {
         NODE_ENV: "development",
