@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "preinstall": "npm install -g pm2",
+    "preinstall": "npm i -g pm2 && pm2 install pm2-logrotate",
     "start": "pm2-runtime start ecosystem.config.js --env production",
     "dev": "cross-env NODE_ENV=development nodemon node ./bin/www",
     "dev-pm2": "pm2-runtime start ecosystem.config.js --env development",
