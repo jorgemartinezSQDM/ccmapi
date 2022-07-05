@@ -7,7 +7,7 @@
     "dev": "cross-env NODE_ENV=development nodemon node ./bin/www",
     "dev-pm2": "pm2-runtime start ecosystem.config.js --env development",
     "start2": "cross-env NODE_ENV=production node ./bin/www",
-    "heroku-postbuild":"npm install -g pm2 && pm2 link oyxb2ebinyqfpdd g1iv8ah3vtf29yq && pm2 delete all && pm2 start app.js"
+    "heroku-postbuild":"npm install -g pm2 && pm2 link oyxb2ebinyqfpdd g1iv8ah3vtf29yq && pm2 start app.js"
   },
   "dependencies": {
     "base-64": "^1.0.0",
