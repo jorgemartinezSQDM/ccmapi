@@ -3,8 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start2": "pm2-runtime start ecosystem.config.js --env production",
-    "start": "cross-env NODE_ENV=production node ./bin/www",
+    "start": "pm2-runtime start ecosystem.config.js --env production",
+    "start2": "cross-env NODE_ENV=production node ./bin/www",
     "dev": "cross-env NODE_ENV=development nodemon node ./bin/www"
   },
   "dependencies": {
