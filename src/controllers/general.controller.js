@@ -77,7 +77,7 @@ const retreiveAll = (req, res) => {
         params[item].toLowerCase().trim()
       );
       
-
+ 
       const value = params[item];
       console.log("/[a-zA-Z]/.test(value) => ", /[a-zA-Z]/.test(value));
       const namefield = objectModel.tableAttributes[item].type.constructor.key;
