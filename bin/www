@@ -94,4 +94,4 @@ function start(){
 }
 
 
-throng({ worker: start, count: WORKERS })
+throng({ worker: start, count: WORKERS, lifetime: Infinity })
