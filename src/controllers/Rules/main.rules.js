@@ -21,7 +21,7 @@ const rule_module = ({
             }
         };
     },
-    campaing_validation : (data) => {
+    campaing_validation : async (data) => {
         const campaign = await databaseFunctionsHelper.getByAttributes(
             campaignObject,
             { ExternalId: data.args.campana }
@@ -51,7 +51,7 @@ const rule_module = ({
         }
 
     },
-    Customer_validation: (data) => {
+    Customer_validation: async(data) => {
         const customer = await databaseFunctionsHelper.getByAttributes(
             customerObject,
             {
@@ -105,7 +105,7 @@ const rule_module = ({
         }
         
     },
-    frequency_validation: (data) => {
+    frequency_validation: async (data) => {
         let TODAY_START = new Date();
         if (data.args.createdAt) {
           TODAY_START = new Date(data.args.createdAt);
