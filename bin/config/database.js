@@ -15,6 +15,13 @@ const sequelize = new Sequelize(
         rejectUnauthorized: false, // This line will fix new error
       },
     },
+    pool: {
+      max: 10,
+      min: 0,
+      acquire: 30000,
+      idle: 10000,
+      maxUses: Infinity
+    }
   }
 );
 
