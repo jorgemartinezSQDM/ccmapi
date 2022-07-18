@@ -3,9 +3,25 @@ const campaignObject = require("../models/campana.model");
 const customerObject = require("../models/cliente.model");
 const frequencyObject = require("../models/frecuencia.model");
 const databaseFunctionsHelper = require("./helpers/database-functions.helper");
+const rules = require("./Rules/steps.rules");
 
-const index_logic = async (req, res) => {
-  index_logic_helper(req.body, res, false)
+const index_logic = (req, res) => {
+  let data = {
+    args: req.body,
+    next_step: 'step1',
+    caparam: false
+  };
+
+  run_logic(data, res)
+  /*rules.steps['step1'].function(data).then((response) => {
+    
+    if (response.to_return) {
+      res.status(response.to_return.status).json(response.to_return.response);
+      return;
+    }
+    //res.status(response.campaign.status).json(response.campaign.result);
+  });*/
+  /*index_logic_helper(req.body, res, false)
     .then((response) => {
       console.log("response => " + JSON.stringify(response));
       res.status(response.status).json(response.response);
@@ -14,15 +30,31 @@ const index_logic = async (req, res) => {
     .catch((error) => {
       res.status(400).json(error);
       return;
-    });
+    });*/
 };
+
+const run_logic = (data, res) => {
+  rules.steps[data.next_step].function(data).then((response) => {
+    console.log('=========================================================')
+    console.log(response)
+
+    if (response.step_type === 'End' && response.to_return) {
+      res.status(response.to_return.status).json(response.to_return.response);
+      return;
+    }
+
+    run_logic(response, res)
+    //res.status(response.campaign.status).json(response.campaign.result);
+  });
+}
+
 
 const index_logic_helper = (args, res, caparam) => {
   return new Promise(async (resolve, reject) => {
     /***
      * Validando existencia de la campaña
      */
-    
+
     const campaign = await databaseFunctionsHelper.getByAttributes(
       campaignObject,
       { ExternalId: args.campana }
@@ -34,7 +66,7 @@ const index_logic_helper = (args, res, caparam) => {
       };
       let status = caparam ? 200 : campaign.status;
       if (caparam) response = { branchResult: "notsent" };
-      
+
       //res.status(campaign.status).json(response);
       return resolve({
         status,
@@ -59,7 +91,7 @@ const index_logic_helper = (args, res, caparam) => {
       };
       let status = caparam ? 200 : customer.status;
       if (caparam) response = { branchResult: "notsent" };
-      
+
       //res.status(customer.status).json(response);
       return resolve({
         status,
@@ -74,7 +106,7 @@ const index_logic_helper = (args, res, caparam) => {
       };
       let status = caparam ? 200 : customer.status;
       if (caparam) response = { branchResult: "notsent" };
-      
+
       //res.status(customer.status).json(response);
       return resolve({
         status,
@@ -89,7 +121,7 @@ const index_logic_helper = (args, res, caparam) => {
       TODAY_START.setHours(0, 0, 0, 0);
       const TOMORROW = new Date(TODAY_START);
       TOMORROW.setDate(TOMORROW.getDate() + 1);
-      
+
       /***
        * Obtener frecuencia basados en los parametros obtenidos mas la fecha del dia de hoy
        */
@@ -117,7 +149,7 @@ const index_logic_helper = (args, res, caparam) => {
         };
 
         if (caparam) responseSer = { branchResult: "sent" };
-        
+
         databaseFunctionsHelper
           .single_create(frequencyObject, {
             ClienteId: customer.result.Id,
@@ -128,7 +160,7 @@ const index_logic_helper = (args, res, caparam) => {
           .then((response) => {
             const result = response.result;
             const status = caparam ? 200 : response.status;
-            
+
             //res.status(status).json(responseSer);
             return resolve({
               status,
@@ -165,7 +197,7 @@ const index_logic_helper = (args, res, caparam) => {
           };
 
           if (caparam) responseSer = { branchResult: "sent" };
-          
+
           frequencyObject
             .increment({ ToquesDia: 1 }, { where: { Id: frequency.result.Id } })
             .then((result) => {
@@ -198,7 +230,7 @@ const index_logic_helper = (args, res, caparam) => {
           };
 
           if (caparam) responseSer = { branchResult: "notsent" };
-          
+
           //res.status(200).json(responseSer);
           return resolve({
             status: 200,
