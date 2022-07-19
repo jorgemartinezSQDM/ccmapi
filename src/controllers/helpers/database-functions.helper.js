@@ -48,6 +48,7 @@ const single_create = (batabaseObject, record) => {
 };*/
 
 const getByAttributes = (batabaseObject, attributes) => {
+  //console.log(attributes)
   return batabaseObject
     .findOne({ where: attributes })
     .then((result) => {
@@ -113,6 +114,31 @@ const getAll = (batabaseObject, res, page, pageSize, where) => {
     .catch((error) => {
       res.status(400).json(error);
       return;
+    });
+};
+
+const getAll2 = (batabaseObject, page, pageSize, where) => {
+  const offset = page * pageSize;
+  const limit = pageSize;
+  //console.log(where)
+  return batabaseObject
+    .findAll({ limit, offset, where: where })
+    .then((result) => {
+      
+      result = userHelper.deletePasswordFromResponse(result);
+      const Next_Page = pageSize === result.length;
+      return {
+        Page: page + 1,
+        Total_Records: result.length,
+        Next_Page,
+        Records: result,
+        status: 200, 
+        success: true
+      };
+    })
+    .catch((error) => {
+      
+      return { result: error, status: 500 };;
     });
 };
 
@@ -242,7 +268,7 @@ const deleteById = (batabaseObject, attributes, res) => {
 module.exports = {
   bulk_create,
   single_create,
-  //getById,
+  getAll2,
   getAll,
   updateOne,
   bulk_update,
