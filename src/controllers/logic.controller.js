@@ -23,15 +23,12 @@ const index_logic_helper = (args, res, caparam) => {
      * Validando existencia de la campaña
      */
 
-    const [campaign, customer] = await Promise.all([
-      databaseFunctionsHelper.getByAttributes(campaignObject, {
+    const campaign = await databaseFunctionsHelper.getByAttributes(
+      campaignObject,
+      {
         ExternalId: args.campana,
-      }),
-      databaseFunctionsHelper.getByAttributes(customerObject, {
-        Tipo_Documento: args.tipo_documento,
-        Numero_Documento: args.numero_documento,
-      }),
-    ]);
+      }
+    );
 
     if (!campaign.success) {
       let response = {
@@ -51,6 +48,13 @@ const index_logic_helper = (args, res, caparam) => {
     /***
      * Validando existencia del cliente
      */
+    const customer = await databaseFunctionsHelper.getByAttributes(
+      customerObject,
+      {
+        Tipo_Documento: args.tipo_documento,
+        Numero_Documento: args.numero_documento,
+      }
+    );
 
     if (!customer.success) {
       let response = {
@@ -93,23 +97,29 @@ const index_logic_helper = (args, res, caparam) => {
       /***
        * Obtener frecuencia basados en los parametros obtenidos mas la fecha del dia de hoy
        */
-      const [frequency, frequencies] = await Promise.all([
-        databaseFunctionsHelper.getByAttributes(frequencyObject, {
+      const frequency = await databaseFunctionsHelper.getByAttributes(
+        frequencyObject,
+        {
           ClienteId: customer.result.Id,
           CampanaId: campaign.result.Id,
           createdAt: {
             [Op.gte]: TODAY_START,
             [Op.lt]: TOMORROW,
           },
-        }),
-        databaseFunctionsHelper.getAll2(frequencyObject, 0, 100, {
+        }
+      );
+      const frequencies = await databaseFunctionsHelper.getAll2(
+        frequencyObject,
+        0,
+        100,
+        {
           ClienteId: customer.result.Id,
           createdAt: {
             [Op.gte]: TODAY_START,
             [Op.lt]: TOMORROW,
           },
-        }),
-      ]);
+        }
+      );
 
       /**
        * Validando si existe la frecuencia
