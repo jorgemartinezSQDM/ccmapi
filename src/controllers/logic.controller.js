@@ -3,9 +3,25 @@ const campaignObject = require("../models/campana.model");
 const customerObject = require("../models/cliente.model");
 const frequencyObject = require("../models/frecuencia.model");
 const databaseFunctionsHelper = require("./helpers/database-functions.helper");
+const rules = require("./Rules/steps.rules");
 
-const index_logic = async (req, res) => {
-  index_logic_helper(req.body, res, false)
+const index_logic = (req, res) => {
+  let data = {
+    args: req.body,
+    next_step: 'step1',
+    caparam: false
+  };
+
+  run_logic(data, res)
+  /*rules.steps['step1'].function(data).then((response) => {
+    
+    if (response.to_return) {
+      res.status(response.to_return.status).json(response.to_return.response);
+      return;
+    }
+    //res.status(response.campaign.status).json(response.campaign.result);
+  });*/
+  /*index_logic_helper(req.body, res, false)
     .then((response) => {
       //console.log("response => " + JSON.stringify(response));
       res.status(response.status).json(response.response);
@@ -14,8 +30,24 @@ const index_logic = async (req, res) => {
     .catch((error) => {
       res.status(400).json(error);
       return;
-    });
+    });*/
 };
+
+const run_logic = (data, res) => {
+  rules.steps[data.next_step].function(data).then((response) => {
+    console.log('=========================================================')
+    console.log(response)
+
+    if (response.step_type === 'End' && response.to_return) {
+      res.status(response.to_return.status).json(response.to_return.response);
+      return;
+    }
+
+    run_logic(response, res)
+    //res.status(response.campaign.status).json(response.campaign.result);
+  });
+}
+
 
 const index_logic_helper = (args, res, caparam) => {
   return new Promise(async (resolve, reject) => {
