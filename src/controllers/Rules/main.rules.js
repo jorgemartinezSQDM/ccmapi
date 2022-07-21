@@ -6,26 +6,25 @@ const frequencyObject = require("../../models/frecuencia.model");
 
 const rule_module = (() => {
   
-  const fail_message = (message, caparam) => {
+  const fail_message = (message, caparam, in_status) => {
     let response = {
       message: message,
       send_campaign: false,
     };
-    let status = caparam ? 200 : campaign.status;
+    let status = caparam ? 200 : in_status;
     if (caparam) response = { branchResult: "notsent" };
 
-    //res.status(campaign.status).json(response);
     return {
       status,
       response,
     };
   }
 
-  const next_step_validation = (booleanParam, data, failMessage, nextStep) => {
+  const next_step_validation = (booleanParam, data, failMessage, nextStep, status) => {
     
       if (booleanParam) {
         data.next_step = 'fails'
-        data.to_return = fail_message (failMessage, data.caparam)
+        data.to_return = fail_message (failMessage, data.caparam, status)
         return data
       }
 
@@ -79,11 +78,50 @@ const rule_module = (() => {
   };
 
 
+  const updateFrequency = (frequency, caparam) => {
+    return new Promise((resolve, reject) => {
+      /**
+             * Si aun no cumple con los toques maximos del dia, le sumamos un toque y
+             * regresamos una respuesta de envio.
+             */
+       let responseSer = {
+        message: "Increase in frequency.",
+        send_campaign: true,
+      };
+
+      if (caparam) responseSer = { branchResult: "sent" };
+
+      frequencyObject
+        .increment(
+          { ToquesDia: 1 },
+          { where: { Id: frequency.result.Id } }
+        )
+        .then((result) => {
+          //res.status(200).json(responseSer);
+          return resolve({
+            status: 200,
+            response: responseSer,
+          });
+        })
+        .catch((error) => {
+          let responseSer = caparam ? { branchResult: "notsent" } : error;
+          let status = caparam ? 400 : 500;
+
+          //res.status(status).json(responseSer);
+          return reject({
+            status,
+            response: responseSer,
+          });
+        });
+    });
+  };
+
+
   let rules = {
 
     
 
-    get_campaign_customer_data: data => {
+    get_campaign_customer_data: async (data) => {
       const args = data.args
       const [campaign, customer] = await Promise.all([
         databaseFunctionsHelper.getByAttributes(
@@ -109,7 +147,7 @@ const rule_module = (() => {
     campaing_validation: data => {
       //const campaign = data.campaign
       
-      return next_step_validation(!campaign.success, data, "Campaign does not exist", 'customer_validation')
+      return next_step_validation(!campaign.success, data, "Campaign does not exist", 'customer_validation', campaign.status)
       /*if (!campaign.success) {
         data.next_step = 'fails'
         data.to_return = fail_message ("Campaign does not exist", data.caparam)
@@ -122,7 +160,7 @@ const rule_module = (() => {
     customer_validation: data => {
       //const customer = data.customer
 
-      return next_step_validation(!customer.success, data, "Customer does not exist", 'blacklist_validation')
+      return next_step_validation(!customer.success, data, "Customer does not exist", 'blacklist_validation', customer.status)
       /*if (!customer.success) {
         data.next_step = 'fails'
         data.to_return = fail_message ("Customer does not exist", data.caparam)
@@ -135,7 +173,7 @@ const rule_module = (() => {
     blacklist_validation: data => {
       //const customer = data.customer
 
-      return next_step_validation(customer.result.ListaNegra, data, "Customer is in a BlackList", 'get_frequencies_data')
+      return next_step_validation(customer.result.ListaNegra, data, "Customer is in a BlackList", 'get_frequencies_data', customer.status)
       /*if (customer.result.ListaNegra) {
         data.next_step = 'fails'
         data.to_return = fail_message ("Customer is in a BlackList", data.caparam)
@@ -145,7 +183,7 @@ const rule_module = (() => {
       data.next_step ='get_frequencies_data'
       return data*/
     },
-    get_frequencies_data: data => {
+    get_frequencies_data: async (data) => {
       let TODAY_START = new Date();
       if (data.args.createdAt) {
         TODAY_START = new Date(data.args.createdAt);
@@ -170,7 +208,146 @@ const rule_module = (() => {
       data.frequencies = frequencies
       data.next_step = 'frequencies_validation'
       return data
+    },
+    frequencies_validation: data => {
+      let frequencies = data.frequencies
+      if(!frequencies.success || frequencies.success === undefined) {
+        data.next_step = 'create_frequency'
+      } else {
+        data.next_step = 'customer_knocks_per_day_validation'
+      }
+      return data
+    },
+    create_frequency: async (data) => {
+      let responseSer = await crearFrecuencia(data.customer, data.campaign, data.TODAY_START, data.caparam)
+      data.step_type = 'End'
+      data.to_return = responseSer
+      return data
+    },
+    customer_knocks_per_day_validation: data => {
+      
+      let fqs = [];
+      let campaigns = {};
+      let knocksPerDay = 0;
+      let frequencies = data.frequencies
+
+      if (frequencies.Records.length === undefined) {
+        fqs.push(frequencies.Records);
+      } else {
+        fqs.push(...frequencies.Records);
+      }
+      
+      for (let freq of fqs) {
+        campaigns[freq.CampanaId] = freq;
+        knocksPerDay += freq.ToquesDia;
+      }
+
+      
+
+      if (knocksPerDay === process.env.MAX_knocksPerDay) {
+        let responseSer = {
+          message: "This message cannot be sent. Knocks limit per day.",
+          send_campaign: false,
+        };
+
+        if (caparam) responseSer = { branchResult: "notsent" };
+
+        //res.status(200).json(responseSer);
+        data.step_type = 'End'
+        data.to_return = {
+          status: 200,
+          response: responseSer,
+        }
+        return data
+      }
+
+      data.campaigns = campaigns
+      data.knocksPerDay = knocksPerDay
+      data.keysCampa = Object.keys(campaigns);
+      data.next_step = 'campaign_per_day_validation'
+      return data
+
+    },
+    campaign_per_day_validation: async (data) => {
+      if (
+        data.keysCampa.length < process.env.MAX_CAMPAIGN_PER_DAY && 
+        !data.keysCampa.includes("" + data.campaign.result.Id)
+        ) {
+
+        data.next_step = 'create_frequency' 
+
+      } else if (
+        data.keysCampa.length === process.env.MAX_CAMPAIGN_PER_DAY && 
+        !data.keysCampa.includes("" + data.campaign.result.Id)
+        ) {
+
+        let responseSer = {
+          message: "This message cannot be sent. Campaign limit per day.",
+          send_campaign: false,
+        };
+
+        if (caparam) responseSer = { branchResult: "notsent" };
+
+        
+        data.step_type = 'End'
+        data.to_return =  {
+          status: 200,
+          response: responseSer,
+        };
+      } else if (
+        keysCampa.length <= 2 &&
+        keysCampa.includes("" + campaign.result.Id)
+      ){
+
+        data.next_step = 'campaign_knocks_per_day_validation' 
+      
+      }
+
+
+      return data
+    },
+    campaign_knocks_per_day_validation: data => {
+      let frequency = data.campaigns[data.campaign.result.Id]
+      let campaign = data.campaign
+      if (
+        campaign.result.numeroVecesClientesDia > frequency.result.ToquesDia
+      ) {
+        data.next_step = 'update_frequency'
+      } else {
+        /**
+             * En caso que ya se hayan cumplido el numero maximo de toques por dia, regresamos
+             * un mensaje donde no es permitido enviar el mensaje de campaña.
+             */
+
+         let responseSer = {
+          message:
+            "No more messages of these campaigns can be sent to the client for today.",
+          send_campaign: false,
+        };
+
+        if (caparam) responseSer = { branchResult: "notsent" };
+
+        data.step_type = 'End'
+        data.to_return = {
+          status: 200,
+          response: responseSer,
+        }
+      }
+        return data
+
+    },
+    update_frequency: async (data) => {
+      let frequency = data.campaigns[data.campaign.result.Id]
+      let responseSer = await updateFrequency (frequency, data.caparam)
+      data.step_type = 'End'
+      data.to_return = responseSer
+      return data
+    },
+    fails: data => {
+      data.step_type = 'End'
+      return data
     }
+
 
   }
   return rules;

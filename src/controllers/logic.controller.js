@@ -3,12 +3,12 @@ const campaignObject = require("../models/campana.model");
 const customerObject = require("../models/cliente.model");
 const frequencyObject = require("../models/frecuencia.model");
 const databaseFunctionsHelper = require("./helpers/database-functions.helper");
-const rules = require("./Rules/steps.rules");
+const rules = require('./Rules/steps.rules')
 
 const index_logic = (req, res) => {
   let data = {
     args: req.body,
-    next_step: 'step1',
+    next_step: 'get_campaign_customer_data',
     caparam: false
   };
 
@@ -34,18 +34,25 @@ const index_logic = (req, res) => {
 };
 
 const run_logic = (data, res) => {
-  rules.steps[data.next_step].function(data).then((response) => {
+  console.log('data.next_step => ' + data.next_step)
+  console.log('rules[data.next_step] => ' + JSON.stringify(rules.steps))
+  const response = rules.steps[data.next_step].action(data)
+  
+  if (response.step_type === 'End' && response.to_return) {
+    res.status(response.to_return.status).json(response.to_return.response);
+    return;
+  }
+
+  run_logic(response, res)
+  /*rules.steps[data.next_step].function(data).then((response) => {
     console.log('=========================================================')
     console.log(response)
 
-    if (response.step_type === 'End' && response.to_return) {
-      res.status(response.to_return.status).json(response.to_return.response);
-      return;
-    }
+    
 
     run_logic(response, res)
     //res.status(response.campaign.status).json(response.campaign.result);
-  });
+  });*/
 }
 
 
