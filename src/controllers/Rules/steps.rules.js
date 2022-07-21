@@ -1,62 +1,55 @@
 const rules =  require("./main.rules")
 const steps = {
-    'step1': {
-        name: 'campaing_validation',
-        next_step: 'step2',
-        failure_step: 'step8',
-        step_type: 'Init',
-        function: rules.campaing_validation
+    get_campaign_customer_data:{
+        function: data => {}, 
+        type: 'Init'
     },
-    'step2': {
-        name: 'Customer_validation',
-        next_step: 'step3',
-        failure_step: 'step8',
-        step_type: 'Next',
-        function: rules.Customer_validation
+    campaing_validation:{
+        function: data => {}, 
+        type: 'Next'
     },
-    'step3': {
-        name: 'blacklist_validation',
-        next_step: 'step4',
-        failure_step: 'step8',
-        step_type: 'Next',
-        function: rules.blacklist_validation
+    customer_validation:{
+        function: data => {}, 
+        type: 'Next'
     },
-    'step4': {
-        name: 'frequency_validation',
-        next_step: 'step5, step6',
-        failure_step: 'step8',
-        step_type: 'Next',
-        function: rules.frequency_validation
+    blacklist_validation:{
+        function: data => {}, 
+        type: 'Next'
     },
-    'step5': {
-        name: 'touch_per_day_validation',
-        next_step: 'step7',
-        failure_step: 'step8',
-        step_type: 'Next',
-        function:  rules.touch_per_day_validation
+    get_frequencies_data:{
+        function: data => {}, 
+        type: 'Next'
     },
-    'step6': {
-        name: 'Create_frequency',
-        next_step: '',
-        failure_step: 'step8',
-        step_type: 'End',
-        function:  rules.Create_frequency
+    frequencies_validation:{
+        function: data => {}, 
+        type: 'Next'
     },
-    'step7': {
-        name: 'update_frequency',
-        next_step: '',
-        failure_step: 'step8',
-        step_type: 'End',
-        function: rules.update_frequency
+    customer_knocks_per_day_validation:{
+        function: data => {}, 
+        type: 'Next'
     },
-    'step8': {
-        name: 'fails',
-        next_step: '',
-        failure_step: 'step8',
-        step_type: 'End',
-        function: rules.fails
+    campaign_per_day_validation:{
+        function: data => {}, 
+        type: 'Next'
     },
-    
+    campaign_knocks_per_day_validation:{
+        function: data => {}, 
+        type: 'Next'
+    },
+    Create_frequency:{
+        function: data => {}, 
+        type: 'End'
+    },
+    update_frequency:{
+        function: data => {}, 
+        type: 'End'
+    },
+    fails:{
+        function: data => {}, 
+        type: 'End'
+    },
+
+
 }
 
 module.exports = {steps}

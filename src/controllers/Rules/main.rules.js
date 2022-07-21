@@ -5,250 +5,174 @@ const customerObject = require("../../models/cliente.model");
 const frequencyObject = require("../../models/frecuencia.model");
 
 const rule_module = (() => {
-  const response_fail = (message, caparam, object) => {
+  
+  const fail_message = (message, caparam) => {
     let response = {
       message: message,
       send_campaign: false,
     };
-    let status = caparam ? 200 : object.status;
+    let status = caparam ? 200 : campaign.status;
     if (caparam) response = { branchResult: "notsent" };
 
-    const toreturn = {
-      next_step: "step8",
-      to_return: {
-        status,
-        response,
-      },
+    //res.status(campaign.status).json(response);
+    return {
+      status,
+      response,
     };
+  }
 
-    return toreturn;
+  const next_step_validation = (booleanParam, data, failMessage, nextStep) => {
+    
+      if (booleanParam) {
+        data.next_step = 'fails'
+        data.to_return = fail_message (failMessage, data.caparam)
+        return data
+      }
+
+      data.next_step = nextStep
+      return data
+  }
+
+  const crearFrecuencia = (customer, campaign, TODAY_START, caparam) => {
+    return new Promise((resolve, reject) => {
+      /**
+       * si no existe la frecuencia la creamos
+       */
+      let responseSer = {
+        message: "A frequency has been created.",
+        send_campaign: true,
+      };
+  
+      if (caparam) responseSer = { branchResult: "sent" };
+  
+      databaseFunctionsHelper
+        .single_create(frequencyObject, {
+          ClienteId: customer.result.Id,
+          CampanaId: campaign.result.Id,
+          ToquesDia: 1,
+          createdAt: TODAY_START,
+        })
+        .then((response) => {
+          const result = response.result;
+          const status = caparam ? 200 : response.status;
+  
+          //res.status(status).json(responseSer);
+          return resolve({
+            status,
+            response: responseSer,
+          });
+        })
+        .catch((error) => {
+          let responseSer = error;
+          let status = 500;
+          if (caparam) {
+            responseSer = { branchResult: "notsent" };
+            status = 400;
+          }
+          //res.status(status).json(responseSer);
+          return reject({
+            status,
+            response: responseSer,
+          });
+        });
+    });
   };
+
+
   let rules = {
-    campaing_validation: (data) => {
-      return new Promise((resolve, reject) => {
-        databaseFunctionsHelper
-          .getByAttributes(campaignObject, { ExternalId: data.args.campana })
-          .then((campaign) => {
-            if (!campaign.success) {
-              const toreturn = response_fail(
-                "Campaign does not exist",
-                data.caparam,
-                campaign
-              );
 
-              return resolve(toreturn);
-            } else {
-              data.campaign = campaign;
-              data.next_step = "step2";
-              return resolve(data);
-            }
-          })
-          .catch((error) => {
-            return reject(error);
-          });
-      });
+    
 
+    get_campaign_customer_data: data => {
+      const args = data.args
+      const [campaign, customer] = await Promise.all([
+        databaseFunctionsHelper.getByAttributes(
+          campaignObject,
+          {
+            ExternalId: args.campana,
+          }
+        ), 
+        databaseFunctionsHelper.getByAttributes(
+          customerObject,
+          {
+            Tipo_Documento: args.tipo_documento,
+            Numero_Documento: args.numero_documento,
+          }
+        )
+      ]);
+
+      data.campaign = campaign
+      data.customer = customer 
+      data.next_step = 'campaing_validation'
+      return data
     },
-    Customer_validation: (data) => {
-      return new Promise((resolve, reject) => {
-        databaseFunctionsHelper
-          .getByAttributes(customerObject, {
-            Tipo_Documento: data.args.tipo_documento,
-            Numero_Documento: data.args.numero_documento,
-          })
-          .then((customer) => {
-            console.log('===================================>')
-            console.log(customer)
-            console.log('===================================>')
-            if (!customer.success) {
-              const toreturn = response_fail(
-                "Customer does not exist",
-                data.caparam,
-                customer
-              )
-              return resolve(
-                toreturn
-              );
-            } else {
-              data.customer = customer;
-              data.next_step = "step3";
-              return resolve(data);
-            }
-          })
-          .catch((error) => {
-            return reject(error);
-          });
-      });
+    campaing_validation: data => {
+      //const campaign = data.campaign
+      
+      return next_step_validation(!campaign.success, data, "Campaign does not exist", 'customer_validation')
+      /*if (!campaign.success) {
+        data.next_step = 'fails'
+        data.to_return = fail_message ("Campaign does not exist", data.caparam)
+        return data
+      }
+
+      data.next_step = 'customer_validation'
+      return data*/
     },
-    blacklist_validation: (data) => {
-      return new Promise((resolve, reject) => {
-        if (data.customer.result.ListaNegra) {
-          return resolve(
-            this.response_fail(
-              "Customer is in a BlackList",
-              data.caparam,
-              data.customer
-            )
-          );
-        } else {
-          data.next_step = "step4";
-          return resolve(data);
+    customer_validation: data => {
+      //const customer = data.customer
+
+      return next_step_validation(!customer.success, data, "Customer does not exist", 'blacklist_validation')
+      /*if (!customer.success) {
+        data.next_step = 'fails'
+        data.to_return = fail_message ("Customer does not exist", data.caparam)
+        return data
+      }
+
+      data.next_step = 'blacklist_validation'
+      return data*/
+    },
+    blacklist_validation: data => {
+      //const customer = data.customer
+
+      return next_step_validation(customer.result.ListaNegra, data, "Customer is in a BlackList", 'get_frequencies_data')
+      /*if (customer.result.ListaNegra) {
+        data.next_step = 'fails'
+        data.to_return = fail_message ("Customer is in a BlackList", data.caparam)
+        return data
+      }
+
+      data.next_step ='get_frequencies_data'
+      return data*/
+    },
+    get_frequencies_data: data => {
+      let TODAY_START = new Date();
+      if (data.args.createdAt) {
+        TODAY_START = new Date(data.args.createdAt);
+        //TODAY_START.setDate(TODAY_START.getDate() + 1);
+      }
+      TODAY_START.setHours(0, 0, 0, 0);
+      const TOMORROW = new Date(TODAY_START);
+      TOMORROW.setDate(TOMORROW.getDate() + 1);
+      const frequencies = await databaseFunctionsHelper.getAll2(
+        frequencyObject,
+        0,
+        100,
+        {
+          ClienteId: customer.result.Id,
+          createdAt: {
+            [Op.gte]: TODAY_START,
+            [Op.lt]: TOMORROW,
+          },
         }
-      });
-    },
-    frequency_validation: (data) => {
-      return new Promise((resolve, reject) => {
-        let TODAY_START = new Date();
-        if (data.args.createdAt) {
-          TODAY_START = new Date(data.args.createdAt);
-          //TODAY_START.setDate(TODAY_START.getDate() + 1);
-        }
-        TODAY_START.setHours(0, 0, 0, 0);
-        const TOMORROW = new Date(TODAY_START);
-        TOMORROW.setDate(TOMORROW.getDate() + 1);
+      );
+      data.TODAY_START = TODAY_START
+      data.frequencies = frequencies
+      data.next_step = 'frequencies_validation'
+      return data
+    }
 
-        data.TODAY_START = TODAY_START
-        data.TOMORROW
-        /***
-         * Obtener frecuencia basados en los parametros obtenidos mas la fecha del dia de hoy
-         */
-        databaseFunctionsHelper
-          .getByAttributes(frequencyObject, {
-            ClienteId: data.customer.result.Id,
-            CampanaId: data.campaign.result.Id,
-            createdAt: {
-              [Op.gte]: TODAY_START,
-              [Op.lt]: TOMORROW,
-            },
-          })
-          .then((frequency) => {
-            if (!frequency.success || frequency.success === undefined) {
-              data.next_step = "step6";
-              return resolve(data);
-            } else {
-              data.next_step = "step5";
-              data.frequency = frequency;
-              return resolve(data);
-            }
-          })
-          .catch((error) => {
-            return reject(error);
-          });
-      });
-    },
-    touch_per_day_validation: (data) => {
-      return new Promise((resolve, reject) => {
-        if (
-          data.campaign.result.numeroVecesClientesDia >
-          data.frequency.result.ToquesDia
-        ) {
-          data.next_step = "step7";
-          return resolve(data);
-        } else {
-          const toreturn = response_fail(
-            "No more messages of these campaigns can be sent to the client for today.",
-            data.caparam,
-            data.campaign
-          );
-
-          return resolve(toreturn);
-        }
-      });
-    },
-    Create_frequency: (data) => {
-      return new Promise((resolve, reject) => {
-        /**
-         * si no existe la frecuencia la creamos
-         */
-        let responseSer = {
-          message: "A frequency has been created.",
-          send_campaign: true,
-        };
-
-        if (data.caparam) responseSer = { branchResult: "sent" };
-
-        databaseFunctionsHelper
-          .single_create(frequencyObject, {
-            ClienteId: data.customer.result.Id,
-            CampanaId: data.campaign.result.Id,
-            ToquesDia: 1,
-            createdAt: data.TODAY_START,
-          })
-          .then((response) => {
-            const result = response.result;
-            const status = data.caparam ? 200 : response.status;
-            data.to_return = {
-              status: 200,
-              response: responseSer,
-            };
-            data.step_type = "End";
-            return resolve(data);
-          })
-          .catch((error) => {
-            let responseSer = error;
-            let status = 500;
-            if (data.caparam) {
-              responseSer = { branchResult: "notsent" };
-              status = 400;
-            }
-
-            return resolve({
-              next_step: "step8",
-              to_return: {
-                status,
-                response: responseSer,
-              },
-            });
-          });
-      });
-    },
-    update_frequency: (data) => {
-      return new Promise((resolve, reject) => {
-        /**
-         * Si aun no cumple con los toques maximos del dia, le sumamos un toque y
-         * regresamos una respuesta de envio.
-         */
-        let responseSer = {
-          message: "Increase in frequency.",
-          send_campaign: true,
-        };
-
-        if (data.caparam) responseSer = { branchResult: "sent" };
-
-        frequencyObject
-          .increment({ ToquesDia: 1 }, { where: { Id: data.frequency.result.Id } })
-          .then((result) => {
-            data.to_return = {
-              status: 200,
-              response: responseSer,
-            };
-            data.step_type = "End";
-            return resolve(data);
-          })
-          .catch((error) => {
-            let responseSer = data.caparam
-              ? { branchResult: "notsent" }
-              : error;
-            let status = data.caparam ? 400 : 500;
-
-            return resolve({
-              next_step: "step8",
-              to_return: {
-                status,
-                response: responseSer,
-              },
-            });
-          });
-      });
-    },
-    fails: (data) => {
-      return new Promise((resolve, reject) => {
-        data.step_type = "End";
-        return resolve(data);
-      });
-    },
-  };
-
+  }
   return rules;
 })();
 
