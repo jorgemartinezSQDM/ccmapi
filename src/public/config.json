@@ -8,7 +8,7 @@
     "type": "RESTDECISION",
     "lang": {
         "en-US": {
-            "name": "CCM POC CLARO",
+            "name": "CCM POC CLARO PROD",
             "description": "A custom Journey Builder",
             "step1Label": "Configure Message"
         }
