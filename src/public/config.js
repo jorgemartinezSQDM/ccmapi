@@ -17,7 +17,7 @@ export default {
     execute: {
       inArguments: [],
       outArguments: [],
-      url: "https://ccm-ca-api.herokuapp.com/execute",
+      url: "https://ccm-ca-api.herokuapp.com/execute/",
       verb: "POST",
       body: "",
       header: "",
@@ -29,7 +29,7 @@ export default {
   configurationArguments: {
     applicationExtensionKey: "e5fb3ffb-3510-46f2-baa6-0a720fdad3c6",
     save: {
-      url: "https://ccm-ca-api.herokuapp.com/save",
+      url: "https://ccm-ca-api.herokuapp.com/save/",
       verb: "POST",
       useJwt: true,
     },

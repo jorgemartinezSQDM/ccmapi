@@ -25,7 +25,7 @@ const save = function (req, res) {
  */
 const execute = async function (req, res) {
   const jwt = req.body.toString("utf8"); //esto se recibe por parametro
-  
+  console.log(jwt)
   
   JWT(jwt, process.env.jwtSecret, async (err, decoded) => {
     if (decoded && decoded.inArguments && decoded.inArguments.length > 0) {
@@ -35,7 +35,15 @@ const execute = async function (req, res) {
         tipo_documento: decodedArgs.tipo_documento,
         numero_documento: decodedArgs.numero_documento,
       };
-      logic_controller.index_logic_helper(args, res, true)
+      console.log(args)
+      let data = {
+        args: args,
+        next_step: 'get_campaign_customer_data',
+        caparam: true
+      };
+
+      run_logic(data, res)
+      /*logic_controller.index_logic_helper(args, res, true)
       .then(response => {
         console.log("response => " + JSON.stringify(response));
         res.status(response.status).json(response.response);
@@ -43,7 +51,7 @@ const execute = async function (req, res) {
       }).catch(error => {
         res.status(400).json({ branchResult: "notsent" });
         return;
-      })
+      })*/
       
       
 
@@ -54,7 +62,7 @@ const execute = async function (req, res) {
       //res.status(200).json({ branchResult: "notsent" });
       //res.status(200).json({ branchResult: "sent" });
     } else {
-      res.status(400).json({ branchResult: "notsent" });
+      res.status(400).json({ branchResult: "notsent", err });
       return;
     }
   });
