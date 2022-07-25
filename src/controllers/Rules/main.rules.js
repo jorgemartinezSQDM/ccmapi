@@ -12,7 +12,7 @@ const rule_module = (() => {
       send_campaign: false,
     };
     let status = caparam ? 200 : in_status;
-    if (caparam) response = { branchResult: "notsent" };
+    if (caparam) response.branchResult= "notsent" ;
 
     return {
       status,
@@ -42,7 +42,7 @@ const rule_module = (() => {
         send_campaign: true,
       };
   
-      if (caparam) responseSer = { branchResult: "sent" };
+      if (caparam) responseSer.branchResult = "sent" ;
   
       databaseFunctionsHelper
         .single_create(frequencyObject, {
@@ -62,10 +62,10 @@ const rule_module = (() => {
           });
         })
         .catch((error) => {
-          let responseSer = error;
+          let responseSer = {error: error};
           let status = 500;
           if (caparam) {
-            responseSer = { branchResult: "notsent" };
+            responseSer.branchResult = "notsent" ;
             status = 400;
           }
           //res.status(status).json(responseSer);
@@ -89,7 +89,7 @@ const rule_module = (() => {
         send_campaign: true,
       };
 
-      if (caparam) responseSer = { branchResult: "sent" };
+      if (caparam) responseSer.branchResult = "sent" ;
 
       frequencyObject
         .increment(
@@ -104,7 +104,7 @@ const rule_module = (() => {
           });
         })
         .catch((error) => {
-          let responseSer = caparam ? { branchResult: "notsent" } : error;
+          let responseSer = { branchResult: "notsent", error } ;
           let status = caparam ? 400 : 500;
 
           //res.status(status).json(responseSer);
@@ -252,7 +252,7 @@ const rule_module = (() => {
           send_campaign: false,
         };
 
-        if (data.caparam) responseSer = { branchResult: "notsent" };
+        if (data.caparam) responseSer.branchResult = "notsent";
 
         //res.status(200).json(responseSer);
         data.step_type = 'End'
@@ -288,7 +288,7 @@ const rule_module = (() => {
           send_campaign: false,
         };
 
-        if (data.caparam) responseSer = { branchResult: "notsent" };
+        if (data.caparam) responseSer.branchResult = "notsent";
 
         
         data.step_type = 'End'
@@ -329,7 +329,7 @@ const rule_module = (() => {
           send_campaign: false,
         };
 
-        if (data.caparam) responseSer = { branchResult: "notsent" };
+        if (data.caparam) responseSer.branchResult = "notsent";
 
         data.step_type = 'End'
         data.to_return = {

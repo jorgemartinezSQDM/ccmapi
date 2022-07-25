@@ -353,4 +353,5 @@ const crearFrecuencia = (customer, campaign, TODAY_START, caparam) => {
 module.exports = {
   index_logic,
   index_logic_helper,
+  run_logic
 };
