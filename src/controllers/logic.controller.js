@@ -23,7 +23,7 @@ const index_logic = (req, res) => {
   });*/
   /*index_logic_helper(req.body, res, false)
     .then((response) => {
-      //console.log("response => " + JSON.stringify(response));
+      ////console.log("response => " + JSON.stringify(response));
       res.status(response.status).json(response.response);
       return;
     })
@@ -33,20 +33,21 @@ const index_logic = (req, res) => {
     });*/
 };
 
-const run_logic = (data, res) => {
-  console.log('data.next_step => ' + data.next_step)
-  console.log('rules[data.next_step] => ' + JSON.stringify(rules.steps))
-  const response = rules.steps[data.next_step].action(data)
+const run_logic = async (data, res) => {
+  //console.log('data: ' + JSON.stringify(data))
+  //console.log('data.next_step => ' + data.next_step)
+  //console.log('rules['+data.next_step+'] => ' + JSON.stringify(rules.steps[data.next_step]))
+  const response = await rules.steps[data.next_step].function(data)
   
   if (response.step_type === 'End' && response.to_return) {
     res.status(response.to_return.status).json(response.to_return.response);
     return;
   }
-
+  //console.log("===========================================")
   run_logic(response, res)
   /*rules.steps[data.next_step].function(data).then((response) => {
-    console.log('=========================================================')
-    console.log(response)
+    //console.log('=========================================================')
+    //console.log(response)
 
     
 
@@ -180,25 +181,25 @@ const index_logic_helper = (args, res, caparam) => {
          * Si existe la frecuencia, validamos que un no cumpla con el dia de toques maximos del dia
          */
         let campa = {};
-        //console.log("===============================");
-        //console.log(frequencies);
+        ////console.log("===============================");
+        ////console.log(frequencies);
         let fqs = [];
         if (frequencies.Records.length === undefined) {
           fqs.push(frequencies.Records);
         } else {
           fqs.push(...frequencies.Records);
         }
-        //console.log(fqs);
-        //console.log("===============================");
+        ////console.log(fqs);
+        ////console.log("===============================");
         let knocksPerDay = 0;
         for (let freq of fqs) {
           campa[freq.CampanaId] = freq.CampanaId;
           knocksPerDay += freq.ToquesDia;
         }
 
-        console.log("=>> knocksPerDay => ", knocksPerDay);
+        //console.log("=>> knocksPerDay => ", knocksPerDay);
         var keysCampa = Object.keys(campa);
-        //console.log("keysCampa => ", keysCampa);
+        ////console.log("keysCampa => ", keysCampa);
         if (knocksPerDay === 4) {
           let responseSer = {
             message: "This message cannot be sent. Knocks limit per day.",

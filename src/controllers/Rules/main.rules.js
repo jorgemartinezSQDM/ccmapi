@@ -94,7 +94,7 @@ const rule_module = (() => {
       frequencyObject
         .increment(
           { ToquesDia: 1 },
-          { where: { Id: frequency.result.Id } }
+          { where: { Id: frequency.Id } }
         )
         .then((result) => {
           //res.status(200).json(responseSer);
@@ -122,6 +122,7 @@ const rule_module = (() => {
     
 
     get_campaign_customer_data: async (data) => {
+      //console.log(' get_campaign_customer_data - data.args => ' + data.args)
       const args = data.args
       const [campaign, customer] = await Promise.all([
         databaseFunctionsHelper.getByAttributes(
@@ -139,6 +140,7 @@ const rule_module = (() => {
         )
       ]);
 
+      //console.log(JSON.stringify(campaign), JSON.stringify(customer))
       data.campaign = campaign
       data.customer = customer 
       data.next_step = 'campaing_validation'
@@ -147,7 +149,7 @@ const rule_module = (() => {
     campaing_validation: data => {
       //const campaign = data.campaign
       
-      return next_step_validation(!campaign.success, data, "Campaign does not exist", 'customer_validation', campaign.status)
+      return next_step_validation(!data.campaign.success, data, "Campaign does not exist", 'customer_validation', data.campaign.status)
       /*if (!campaign.success) {
         data.next_step = 'fails'
         data.to_return = fail_message ("Campaign does not exist", data.caparam)
@@ -160,7 +162,7 @@ const rule_module = (() => {
     customer_validation: data => {
       //const customer = data.customer
 
-      return next_step_validation(!customer.success, data, "Customer does not exist", 'blacklist_validation', customer.status)
+      return next_step_validation(!data.customer.success, data, "Customer does not exist", 'blacklist_validation', data.customer.status)
       /*if (!customer.success) {
         data.next_step = 'fails'
         data.to_return = fail_message ("Customer does not exist", data.caparam)
@@ -173,7 +175,7 @@ const rule_module = (() => {
     blacklist_validation: data => {
       //const customer = data.customer
 
-      return next_step_validation(customer.result.ListaNegra, data, "Customer is in a BlackList", 'get_frequencies_data', customer.status)
+      return next_step_validation(data.customer.result.ListaNegra, data, "Customer is in a BlackList", 'get_frequencies_data', data.customer.status)
       /*if (customer.result.ListaNegra) {
         data.next_step = 'fails'
         data.to_return = fail_message ("Customer is in a BlackList", data.caparam)
@@ -197,7 +199,7 @@ const rule_module = (() => {
         0,
         100,
         {
-          ClienteId: customer.result.Id,
+          ClienteId: data.customer.result.Id,
           createdAt: {
             [Op.gte]: TODAY_START,
             [Op.lt]: TOMORROW,
@@ -242,15 +244,15 @@ const rule_module = (() => {
         knocksPerDay += freq.ToquesDia;
       }
 
-      
+      //console.log("=>>> " + knocksPerDay + " === " + parseInt(process.env.MAX_knocksPerDay))
 
-      if (knocksPerDay === process.env.MAX_knocksPerDay) {
+      if (knocksPerDay === parseInt(process.env.MAX_knocksPerDay)) {
         let responseSer = {
           message: "This message cannot be sent. Knocks limit per day.",
           send_campaign: false,
         };
 
-        if (caparam) responseSer = { branchResult: "notsent" };
+        if (data.caparam) responseSer = { branchResult: "notsent" };
 
         //res.status(200).json(responseSer);
         data.step_type = 'End'
@@ -270,14 +272,14 @@ const rule_module = (() => {
     },
     campaign_per_day_validation: async (data) => {
       if (
-        data.keysCampa.length < process.env.MAX_CAMPAIGN_PER_DAY && 
+        data.keysCampa.length < parseInt(process.env.MAX_CAMPAIGN_PER_DAY) && 
         !data.keysCampa.includes("" + data.campaign.result.Id)
         ) {
 
         data.next_step = 'create_frequency' 
 
       } else if (
-        data.keysCampa.length === process.env.MAX_CAMPAIGN_PER_DAY && 
+        data.keysCampa.length === parseInt(process.env.MAX_CAMPAIGN_PER_DAY) && 
         !data.keysCampa.includes("" + data.campaign.result.Id)
         ) {
 
@@ -286,7 +288,7 @@ const rule_module = (() => {
           send_campaign: false,
         };
 
-        if (caparam) responseSer = { branchResult: "notsent" };
+        if (data.caparam) responseSer = { branchResult: "notsent" };
 
         
         data.step_type = 'End'
@@ -295,8 +297,8 @@ const rule_module = (() => {
           response: responseSer,
         };
       } else if (
-        keysCampa.length <= 2 &&
-        keysCampa.includes("" + campaign.result.Id)
+        data.keysCampa.length <= 2 &&
+        data.keysCampa.includes("" + data.campaign.result.Id)
       ){
 
         data.next_step = 'campaign_knocks_per_day_validation' 
@@ -309,8 +311,10 @@ const rule_module = (() => {
     campaign_knocks_per_day_validation: data => {
       let frequency = data.campaigns[data.campaign.result.Id]
       let campaign = data.campaign
+      //console.log('frequency =>> ' + JSON.stringify(frequency))
+      //console.log('campaign =>> ' + JSON.stringify(campaign))
       if (
-        campaign.result.numeroVecesClientesDia > frequency.result.ToquesDia
+        campaign.result.numeroVecesClientesDia > frequency.ToquesDia
       ) {
         data.next_step = 'update_frequency'
       } else {
@@ -325,7 +329,7 @@ const rule_module = (() => {
           send_campaign: false,
         };
 
-        if (caparam) responseSer = { branchResult: "notsent" };
+        if (data.caparam) responseSer = { branchResult: "notsent" };
 
         data.step_type = 'End'
         data.to_return = {
