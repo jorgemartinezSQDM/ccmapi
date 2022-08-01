@@ -8,6 +8,7 @@ router.post('/publish', activity.publish);
 router.post('/execute', activity.execute);
 router.post('/stop', activity.stop);
 router.post('/edit', activity.edit);
+router.post('/logs', activity.edit);
 
 module.exports = router;
 
